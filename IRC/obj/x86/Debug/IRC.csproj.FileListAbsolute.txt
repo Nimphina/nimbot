@@ -1,0 +1,7 @@
+C:\Users\Daniel\Documents\GitHub\nimbot\IRC\bin\Debug\IRC.exe
+C:\Users\Daniel\Documents\GitHub\nimbot\IRC\bin\Debug\IRC.pdb
+C:\Users\Daniel\Documents\GitHub\nimbot\IRC\bin\Debug\Meebey.SmartIrc4net.dll
+C:\Users\Daniel\Documents\GitHub\nimbot\IRC\bin\Debug\log4net.dll
+C:\Users\Daniel\Documents\GitHub\nimbot\IRC\obj\x86\Debug\IRC.csprojResolveAssemblyReference.cache
+C:\Users\Daniel\Documents\GitHub\nimbot\IRC\obj\x86\Debug\IRC.exe
+C:\Users\Daniel\Documents\GitHub\nimbot\IRC\obj\x86\Debug\IRC.pdb

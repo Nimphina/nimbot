@@ -1,124 +1,131 @@
 using Meebey.SmartIrc4net;
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Text;
 
-class  ClientDemo
+namespace IRC
 {
-    public static IrcClient irc = new  IrcClient();
-    public string server = "irc.esper.net";
-    private int port = 6667;
-	private string channel = "#nimphina";
-	public const string botop = "Nimphina";
-	public const string leavecommand = "botquit";
-	public const string opsymbol = "*";
-	public const string version = "dev-1.0.3";
-	public string botname = "Hershey";
-
-    public static  void Main()
+    class ClientDemo
     {
-        ClientDemo demo = new  ClientDemo();
-    }
+        public static IrcClient irc = new IrcClient();
+        public string server = "irc.esper.net";
+        private int port = 6667;
+        private string channel = "#nimphina";
+        public const string botop = "Nimphina";
+        public const string version = "dev-1.0.5";
+        public string botname = "Hershey";
 
-    public ClientDemo()
-    {
-        irc.OnConnected += new EventHandler(OnConnected);
-		irc.OnConnecting += new EventHandler(OnConnecting);
-		irc.OnPing += new  PingEventHandler(OnPing);
-		irc.OnDisconnected += new  EventHandler(OnDisconnected);
-		irc.OnChannelMessage += new  IrcEventHandler(OnChannelMessage);
-
-        try
+        public static void Main()
         {
-            irc.Connect(server, port);
+            Console.Title = "Nimbot terminal";
+
+          /*  try
+            {
+                TextReader reader = new StreamReader("config");
+                reader.ReadLine();
+                string getsetting = reader.ReadLine();
+                Console.WriteLine(getsetting);
+                reader.Close();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                Console.WriteLine("Creating a blank config file");
+                StreamWriter writer = new StreamWriter("config");
+                writer.WriteLine("Server:");
+                writer.WriteLine(" ");
+                writer.WriteLine("Port:");
+                writer.WriteLine(" ");
+                writer.WriteLine("Bot nick:");
+                writer.WriteLine(" ");
+                writer.WriteLine("Botop:");
+                writer.WriteLine(" ");
+                writer.WriteLine("Command char:");
+                writer.WriteLine(" ");
+                writer.Close();
+                Console.WriteLine("Now exiting");
+                Console.ReadLine();
+                Environment.Exit(0);
+            } */
+
+            ClientDemo demo = new ClientDemo();
         }
-        catch (Exception e)
+
+        public ClientDemo()
         {
-            Console.Write("Failed to connect:n"+ e.Message);
-            Console.ReadKey();
+            irc.OnConnected += new EventHandler(OnConnected);
+            irc.OnConnecting += new EventHandler(OnConnecting);
+            irc.OnPing += new PingEventHandler(OnPing);
+            irc.OnDisconnected += new EventHandler(OnDisconnected);
+            irc.OnChannelMessage += new IrcEventHandler(OnChannelMessage);
+
+            try
+            {
+                irc.Connect(server, port);
+            }
+            catch (Exception e)
+            {
+                Console.Write("Failed to connect:n" + e.Message);
+                Console.ReadKey();
+            }
         }
-    }
 
-	void OnConnecting (object sender, EventArgs e)
-	{
-		Console.WriteLine("Starting Nimbot version: {0} " , version);
-		Console.WriteLine("Botop: {0}, Command char: {1}," , botop, opsymbol);
-		Console.WriteLine(" ");
-		Console.WriteLine("Connecting to server {0} on port {1}." , server, port );
-	}
+        void OnConnecting(object sender, EventArgs e)
+        {
+            Console.WriteLine("Starting Nimbot version: {0} ", version);
+            Console.WriteLine("Botop: {0}, Command char: {1},", botop, "~");
+            Console.WriteLine(" ");
+            Console.WriteLine("Connecting to server {0} on port {1}.", server, port);
+        }
 
-    void OnConnected (object sender, EventArgs e)
-	{
-		Console.WriteLine ("Connected to {0}.", server);
-		irc.SendMessage (SendType.Message, channel, "Joined: " + channel + " Bot op is: " + botop , Priority.BelowMedium);
+        void OnConnected(object sender, EventArgs e)
+        {
+            Console.WriteLine("Connected to {0}.", server);
+            //irc.SendMessage(SendType.Message, channel, "Joined: " + channel + " Bot op is: " + botop, Priority.BelowMedium);
 
-		irc.Login (botname, botname, 0, botname);
-		irc.RfcJoin (channel);
-		Console.WriteLine ("Joining {0}.", channel);
-		irc.Listen (true);
-    }
+            irc.Login(botname, botname, 0, botname);
+            irc.RfcJoin(channel);
+            Console.WriteLine("Joining {0}.", channel);
+            irc.Listen(true);
+        }
 
-	void OnChannelMessage (object sender, IrcEventArgs e)
-	{
-		Console.WriteLine (e.Data.Type + ":");
-		Console.WriteLine ("(" + e.Data.Channel + ") <" + e.Data.Nick + "> " + e.Data.Message);
+        public void OnChannelMessage(object sender, IrcEventArgs e)
+        {
+            Console.WriteLine(e.Data.Type + ":");
+            Console.WriteLine("(" + e.Data.Channel + ") <" + e.Data.Nick + "> " + e.Data.Message);
+            string opsymbol = "~";
 
-		if (e.Data.Message.StartsWith (opsymbol)) {
+            string message = e.Data.Message;
+            string nick = e.Data.Nick;
 
-			Console.WriteLine("Got command!");
-			switch(e.Data.Message){
-			
-			case opsymbol:
-				irc.SendMessage (SendType.Message, channel, "Need to actually enter a command you know.", Priority.High);
-				break;
-			
-			case opsymbol + "Ping":
-			case opsymbol + "ping":
-			irc.SendMessage (SendType.Message, channel, "pong", Priority.High);
-				break;
-			
-			case opsymbol + "info":
-			irc.SendMessage (SendType.Message, channel, "I am a shitty little bot created by Nimphina using the smartirc4net lib", Priority.High);
-				break;
+            if (e.Data.Message.StartsWith(opsymbol))
+            {
+                message = message.Trim(new Char[] { '~' });
+                bcommands.bc(botop, channel, nick, message, irc);
+            }
 
-			case opsymbol + leavecommand:
-				if (e.Data.Nick == botop) {
-					irc.SendMessage (SendType.Message, channel, "Qwitting", Priority.High);
-					Environment.Exit (0);
-				}else{
-					irc.SendMessage (SendType.Message, channel, "You are not allowed to issue that command :C", Priority.High);
-					Console.WriteLine ("Unauthorized user using quit, suggesting immediate extermination");
-				}
-				break;
+            if (e.Data.Nick == "Ralph")
+            {
+                irc.SendMessage(SendType.Message, channel, "I hate Ralph and he hates me", Priority.High);
+                Console.WriteLine("RALPH SAID SHIT");
+            }
 
-			case opsymbol + "Hello":
-			case opsymbol + "hello":
-			case opsymbol + "hi":
-				irc.SendMessage (SendType.Message, channel, "Hello, " + e.Data.Nick, Priority.High);
-				break;
+            if (e.Data.Message == "What is love?")
+            {
 
-			}
+                irc.SendMessage(SendType.Message, channel, "Baby don't hurt me", Priority.High);
+            }
+        }
 
-		}
+        void OnDisconnected(object sender, EventArgs e)
+        {
+            Console.WriteLine("Disconnected.");
+        }
 
-		if (e.Data.Nick == "Ralph") {
-			irc.SendMessage (SendType.Message, channel, "I hate Ralph and he hates me", Priority.High);
-			Console.WriteLine ("RALPH SAID SHIT");
-		}
-
-		if (e.Data.Message == "What is love?") {
-
-			irc.SendMessage (SendType.Message, channel, "Baby don't hurt me", Priority.High);
-		}
-    }
-	 
-	void OnDisconnected(object sender, EventArgs e)
-    {
-        Console.WriteLine("Disconnected.");
-    }
-
-	void OnPing(object sender, PingEventArgs e)
-    {
-        Console.WriteLine("Responded to ping at {0}.",DateTime.Now.ToShortTimeString());
+        void OnPing(object sender, PingEventArgs e)
+        {
+            Console.WriteLine("Responded to ping at {0}.", DateTime.Now.ToShortTimeString());
+        }
     }
 }
