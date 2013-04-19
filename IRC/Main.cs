@@ -10,9 +10,10 @@ class  ClientDemo
     private int port = 6667;
 	private string channel = "#nimphina";
 	public const string botop = "Nimphina";
-	public const string leavecommand = "LEAVEUS";
+	public const string leavecommand = "botquit";
 	public const string opsymbol = "*";
-	public const string version = "dev-1.0.2";
+	public const string version = "dev-1.0.3";
+	public string botname = "Hershey";
 
     public static  void Main()
     {
@@ -49,9 +50,9 @@ class  ClientDemo
     void OnConnected (object sender, EventArgs e)
 	{
 		Console.WriteLine ("Connected to {0}.", server);
-		irc.SendMessage (SendType.Message, channel, "Connected to: " + server + " Bot op is: " + botop , Priority.BelowMedium);
+		irc.SendMessage (SendType.Message, channel, "Joined: " + channel + " Bot op is: " + botop , Priority.BelowMedium);
 
-		irc.Login ("Nimbot", "Nim-bot", 0, "Nimbot");
+		irc.Login (botname, botname, 0, botname);
 		irc.RfcJoin (channel);
 		Console.WriteLine ("Joining {0}.", channel);
 		irc.Listen (true);
@@ -70,12 +71,17 @@ class  ClientDemo
 			case opsymbol:
 				irc.SendMessage (SendType.Message, channel, "Need to actually enter a command you know.", Priority.High);
 				break;
-
+			
+			case opsymbol + "Ping":
+			case opsymbol + "ping":
+			irc.SendMessage (SendType.Message, channel, "pong", Priority.High);
+				break;
+			
 			case opsymbol + "info":
 			irc.SendMessage (SendType.Message, channel, "I am a shitty little bot created by Nimphina using the smartirc4net lib", Priority.High);
 				break;
 
-			case opsymbol + "botquit":
+			case opsymbol + leavecommand:
 				if (e.Data.Nick == botop) {
 					irc.SendMessage (SendType.Message, channel, "Qwitting", Priority.High);
 					Environment.Exit (0);
