@@ -10,8 +10,7 @@ namespace IRC
     {
 
         public static void bc (string botop, string channel, string nick, string message, IrcClient irc){
-            
-     
+           
             string[] args = message.TrimEnd().Split(' ');
             Console.WriteLine("A command was used!");
             int lnth = args.Length;
@@ -36,6 +35,15 @@ namespace IRC
                     }
                     break; 
 
+				case "reddit":
+				if (lnth == 2)
+                    {
+                        irc.SendMessage(SendType.Message, channel, string.Format("{0}: http://reddit.com/r/{1}", nick, args[1]));
+                    }
+				else{
+					irc.SendMessage(SendType.Message, channel, string.Format("{0}: http://reddit.com/r/{1}", nick, "{1}"));
+					}
+				break;
 
                 case "Ping":
                 case "ping":

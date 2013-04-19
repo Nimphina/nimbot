@@ -18,6 +18,7 @@ namespace IRC
 
         public static void Main()
         {
+
             Console.Title = "Nimbot terminal";
 
           /*  try
@@ -90,32 +91,37 @@ namespace IRC
             irc.Listen(true);
         }
 
-        public void OnChannelMessage(object sender, IrcEventArgs e)
-        {
-            Console.WriteLine(e.Data.Type + ":");
-            Console.WriteLine("(" + e.Data.Channel + ") <" + e.Data.Nick + "> " + e.Data.Message);
-            string opsymbol = "~";
+        public void OnChannelMessage (object sender, IrcEventArgs e)
+		{
+			Console.WriteLine (e.Data.Type + ":");
+			Console.WriteLine ("(" + e.Data.Channel + ") <" + e.Data.Nick + "> " + e.Data.Message);
+			string opsymbol = "#";
 
-            string message = e.Data.Message;
-            string nick = e.Data.Nick;
+			string message = e.Data.Message;
+			string nick = e.Data.Nick;
 
-            if (e.Data.Message.StartsWith(opsymbol))
-            {
-                message = message.Trim(new Char[] { '~' });
-                bcommands.bc(botop, channel, nick, message, irc);
-            }
+			if (e.Data.Message.StartsWith (opsymbol)) {
+				message = message.Trim (new Char[] { '#' });
+				bcommands.bc (botop, channel, nick, message, irc);
+			}
 
-            if (e.Data.Nick == "Ralph")
-            {
-                irc.SendMessage(SendType.Message, channel, "I hate Ralph and he hates me", Priority.High);
-                Console.WriteLine("RALPH SAID SHIT");
-            }
+			if (e.Data.Nick == "Ralph") {
+				irc.SendMessage (SendType.Message, channel, "I hate Ralph and he hates me", Priority.High);
+				Console.WriteLine ("RALPH SAID SHIT");
+			}
 
-            if (e.Data.Message == "What is love?")
-            {
+			if (e.Data.Message == "What is love?") {
 
-                irc.SendMessage(SendType.Message, channel, "Baby don't hurt me", Priority.High);
-            }
+				irc.SendMessage (SendType.Message, channel, "Baby don't hurt me", Priority.High);
+			}
+			if (e.Data.Message == "Hodor!") {
+
+				irc.SendMessage (SendType.Message, channel, "Oh shut up", Priority.High);
+			}
+			if (e.Data.Message == "The war z") {
+
+				irc.SendMessage (SendType.Message, channel, "http://www.youtube.com/watch?v=RtKAm3nzg6I", Priority.High);
+			}
         }
 
         void OnDisconnected(object sender, EventArgs e)
