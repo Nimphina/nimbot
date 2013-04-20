@@ -122,6 +122,10 @@ namespace IRC
 
 				irc.SendMessage (SendType.Message, channel, "http://www.youtube.com/watch?v=RtKAm3nzg6I", Priority.High);
 			}
+			if (e.Data.Message == "Hello" || e.Data.Message == "hello" || e.Data.Message == "Hi" || e.Data.Message == "hi") {
+			
+				irc.SendMessage (SendType.Message, channel, string.Format("Hello {0}", e.Data.Nick) , Priority.High);
+			}
         }
 
         void OnDisconnected(object sender, EventArgs e)
