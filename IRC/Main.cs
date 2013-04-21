@@ -13,7 +13,7 @@ namespace IRC
         private int port = 6667;
         private string rootchannel = "#botspam";
         public const string botop = "Nimphina";
-        public const string version = "dev-1.0.9";
+        public const string version = "dev-1.0.10";
         public string botname = "Hershey";
 
         public static void Main()

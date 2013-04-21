@@ -20,20 +20,7 @@ namespace IRC
             switch (switchmess)
             {
                 case "u":
-                    Console.WriteLine("U command");
-
-                    if (lnth == 2)
-                    {
-                        irc.SendMessage(SendType.Message, channel, string.Format("{0}: http://u.mcf.li/{1}", nick, args[1]));
-                    }
-                    if (lnth == 3)
-                    {
-                        irc.SendMessage(SendType.Message, channel, string.Format("{0}: http://u.mcf.li/{1}/{2}", nick, args[1], args[2]));
-                    }
-                    else
-                    {
-                        irc.SendMessage(SendType.Message, channel, string.Format("{0}, List of options: [profile, posts, topics, warnings, videos, friends, pm, names, admin, edit, modcp, validate, warn, suspend, iphistory]", nick));
-                    }
+					u.umcf(args, lnth, channel, nick, irc);
                     break;
 
                 case "reddit":
@@ -93,148 +80,19 @@ namespace IRC
                     break;
 
                 case "add":
-                    try
-                    {
-                        double[] operands = new double[lnth];
-                        double noresult = 0;
-                        if (lnth >= 3)
-                        {
-                            for (int i = 1; i < lnth; i++)
-                            {
-                                double workingnum = double.Parse(args[i]);
-                                operands[i] = workingnum;
-                                Console.WriteLine(operands[i]);
-
-                                noresult = noresult + operands[i];
-                            }
-
-                            string result = Convert.ToString(noresult);
-                            irc.SendMessage(SendType.Message, channel, result, Priority.High);
-
-
-                            if (result == "69")
-                            {
-                                irc.SendMessage(SendType.Message, channel, "Heh heh, 69, hehe", Priority.High);
-                            }
-                        }
-                        else
-                        {
-                            irc.SendMessage(SendType.Message, channel, "placholder message", Priority.High);
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        irc.SendMessage(SendType.Message, channel, e.Message, Priority.High);
-                    }
+					addition.add(args, lnth, channel, nick, irc);
                     break;
 
                 case "minus":
-                    //Note, fix 1 - 1 producing -1 when you can be bothered
-                    try
-                    {
-                        double[] operands = new double[lnth];
-                        double noresult = 1;
-                        if (lnth >= 3)
-                        {
-                            for (int i = 1; i < lnth; i++)
-                            {
-                                double workingnum = double.Parse(args[i]);
-                                operands[i] = workingnum;
-                                Console.WriteLine(operands[i]);
-
-                                noresult = noresult - operands[i];
-                            }
-
-                            string result = Convert.ToString(noresult);
-                            irc.SendMessage(SendType.Message, channel, result, Priority.High);
-
-
-                            if (result == "69")
-                            {
-                                irc.SendMessage(SendType.Message, channel, "Heh heh, 69, hehe", Priority.High);
-                            }
-                        }
-                        else
-                        {
-                            irc.SendMessage(SendType.Message, channel, "placholder message", Priority.High);
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        irc.SendMessage(SendType.Message, channel, e.Message, Priority.High);
-                    }
-                    break;
+					subtraction.minus(args, lnth, channel, nick, irc);
+					break;
 
                 case "multiply":
-                    try
-                    {
-                        double[] operands = new double[lnth];
-                        double noresult = 1;
-                        if (lnth >= 3)
-                        {
-                            for (int i = 1; i < lnth; i++)
-                            {
-                                double workingnum = double.Parse(args[i]);
-                                operands[i] = workingnum;
-                                Console.WriteLine(operands[i]);
-
-                                noresult = noresult * operands[i];
-                            }
-
-                            string result = Convert.ToString(noresult);
-                            irc.SendMessage(SendType.Message, channel, result, Priority.High);
-
-
-                            if (result == "69")
-                            {
-                                irc.SendMessage(SendType.Message, channel, "Heh heh, 69, hehe", Priority.High);
-                            }
-                        }
-                        else
-                        {
-                            irc.SendMessage(SendType.Message, channel, "placholder message", Priority.High);
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        irc.SendMessage(SendType.Message, channel, e.Message, Priority.High);
-                    }
+					multiplication.multi(args, lnth, channel, nick, irc);
                     break;
 
                 case "divide":
-                    try
-                    {
-                        double[] operands = new double[lnth];
-                        double noresult = 1;
-                        if (lnth >= 3)
-                        {
-                            for (int i = 1; i < lnth; i++)
-                            {
-                                double workingnum = double.Parse(args[i]);
-                                operands[i] = workingnum;
-                                Console.WriteLine(operands[i]);
-
-                                noresult = noresult / operands[i];
-                            }
-
-                            string result = Convert.ToString(noresult);
-                            irc.SendMessage(SendType.Message, channel, result, Priority.High);
-
-
-                            if (result == "69")
-                            {
-                                irc.SendMessage(SendType.Message, channel, "Heh heh, 69, hehe", Priority.High);
-                            }
-                        }
-                        else
-                        {
-                            irc.SendMessage(SendType.Message, channel, "placholder message", Priority.High);
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        irc.SendMessage(SendType.Message, channel, e.Message, Priority.High);
-                    }
+				division.divide(args, lnth, channel, nick, irc);
                     break;
 
                 case "condebug":

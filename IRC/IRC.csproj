@@ -40,6 +40,11 @@
     <Compile Include="bcommands.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="commands\addition.cs" />
+    <Compile Include="commands\division.cs" />
+    <Compile Include="commands\subtraction.cs" />
+    <Compile Include="commands\multiplication.cs" />
+    <Compile Include="commands\u.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
