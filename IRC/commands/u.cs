@@ -16,11 +16,11 @@ namespace IRC
             {
                 irc.SendMessage(SendType.Message, channel, string.Format("{0}: http://u.mcf.li/{1}", nick, args[1]));
             }
-            if (lnth == 3)
+            else if (lnth == 3)
             {
                 irc.SendMessage(SendType.Message, channel, string.Format("{0}: http://u.mcf.li/{1}/{2}", nick, args[1], args[2]));
             }
-            else //Bug: This option is still executed even if lnth = 2 for some reason.
+            else 
             {
                 irc.SendMessage(SendType.Message, channel, string.Format("{0}, List of options: [profile, posts, topics, warnings, videos, friends, pm, names, admin, edit, modcp, validate, warn, suspend, iphistory]", nick));
             }

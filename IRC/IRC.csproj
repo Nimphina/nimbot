@@ -45,6 +45,7 @@
     <Compile Include="commands\subtraction.cs" />
     <Compile Include="commands\multiplication.cs" />
     <Compile Include="commands\u.cs" />
+    <Compile Include="commands\reddit.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -24,16 +24,26 @@ namespace IRC
                     break;
 
                 case "reddit":
-                    if (lnth == 2)
-                    {
-                        irc.SendMessage(SendType.Message, channel, string.Format("{0}: http://reddit.com/r/{1}", nick, args[1]));
-                    }
-                    else
-                    {
-                        irc.SendMessage(SendType.Message, channel, string.Format("{0}: http://reddit.com/r/{1}", nick, "{1}"));
-                    }
+					redditclass.reddit(args, lnth, channel, nick, irc);
                     break;
 
+				case "add":
+					addition.add(args, lnth, channel, nick, irc);
+                    break;
+
+                case "minus":
+					subtraction.minus(args, lnth, channel, nick, irc);
+					break;
+
+                case "multiply":
+					multiplication.multi(args, lnth, channel, nick, irc);
+                    break;
+
+                case "divide":
+				division.divide(args, lnth, channel, nick, irc);
+                    break;
+
+				//All hardcoded, non class commands
                 case "Ping":
                 case "ping":
                     Console.WriteLine("ping command");
@@ -53,6 +63,7 @@ namespace IRC
                     }
                     else
                     {
+						Console.WriteLine("Quit command issed by {0}", nick);
                         irc.SendMessage(SendType.Message, channel, "You are not allowed to issue that command :C", Priority.High);
                         Console.WriteLine("Unauthorized user using quit, suggesting immediate extermination");
                     }
@@ -79,26 +90,10 @@ namespace IRC
                     irc.RfcPart(args[1]);
                     break;
 
-                case "add":
-					addition.add(args, lnth, channel, nick, irc);
-                    break;
-
-                case "minus":
-					subtraction.minus(args, lnth, channel, nick, irc);
-					break;
-
-                case "multiply":
-					multiplication.multi(args, lnth, channel, nick, irc);
-                    break;
-
-                case "divide":
-				division.divide(args, lnth, channel, nick, irc);
-                    break;
-
                 case "condebug":
                     if (nick == botop)
                     {
-                        irc.SendMessage(SendType.Message, channel, string.Format("{0}, Messges from console enabled", botop), Priority.High);
+                        irc.SendMessage(SendType.Message, channel, string.Format("{0}, Messages from console enabled", botop), Priority.High);
                         while (true)
                         {
                             Console.WriteLine("Enter a message: ");
@@ -106,12 +101,16 @@ namespace IRC
 
                             if (consolemessage == "/stop")
                             {
-                                irc.SendMessage(SendType.Message, channel, string.Format("{0}, Messges from console disabled", botop), Priority.High);
+                                irc.SendMessage(SendType.Message, channel, string.Format("{0}, Messages from console disabled", botop), Priority.High);
                                 break;
                             }
                             irc.SendMessage(SendType.Message, channel, string.Format("[{0}]", consolemessage), Priority.High);
                         }
                     }
+					else
+					{
+						irc.SendMessage(SendType.Message, channel, "You are not allowed to issue that command :C", Priority.High);
+					}
                     break;
             }
         }
