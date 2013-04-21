@@ -10,6 +10,7 @@ namespace IRC
 	{
 		public static void reddit (string[] args, int lnth, string channel, string nick, IrcClient irc)
 		{
+            Console.WriteLine("{0}, called reddit command", nick);
 			if (lnth == 3)
             {
 				if (args[1] == "user")

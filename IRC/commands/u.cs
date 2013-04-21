@@ -10,8 +10,7 @@ namespace IRC
 	{
 		public static void umcf (string [] args, int lnth, string channel, string nick, IrcClient irc)
 		{
-			Console.WriteLine("U command");
-
+            Console.WriteLine("{0}, called division command", nick);
             if (lnth == 2)
             {
                 irc.SendMessage(SendType.Message, channel, string.Format("{0}: http://u.mcf.li/{1}", nick, args[1]));

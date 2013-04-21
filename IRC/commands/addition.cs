@@ -10,6 +10,7 @@ namespace IRC
     {
         public static void add(string[] args, int lnth, string channel, string nick, IrcClient irc)
         {
+            Console.WriteLine("{0}, called addition command", nick);
             try
             {
                 double[] operands = new double[lnth];
@@ -20,7 +21,6 @@ namespace IRC
                     {
                         double workingnum = double.Parse(args[i]);
                         operands[i] = workingnum;
-                        Console.WriteLine(operands[i]);
 
                         noresult = noresult + operands[i];
                     }

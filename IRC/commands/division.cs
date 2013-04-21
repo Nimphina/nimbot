@@ -10,6 +10,7 @@ namespace IRC
 	{
 		public static void divide (string[] args, int lnth, string channel, string nick, IrcClient irc)
 		{
+            Console.WriteLine("{0}, called division command", nick);
 			try 
 			{
 				double[] operands = new double[lnth];

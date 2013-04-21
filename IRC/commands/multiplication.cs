@@ -10,6 +10,7 @@ namespace IRC
 	{
 		public static void multi (string[] args, int lnth, string channel, string nick, IrcClient irc)
 		{
+            Console.WriteLine("{0}, called multiplication command", nick);
 			try 
 			{
 				double[] operands = new double[lnth];

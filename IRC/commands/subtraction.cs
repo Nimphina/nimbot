@@ -10,6 +10,7 @@ namespace IRC
 	{
 		public static void minus (string[] args, int lnth, string channel, string nick, IrcClient irc)
 		{
+            Console.WriteLine("{0}, called subtraction command", nick);
 			try 
 			{
 				double[] operands = new double[lnth];

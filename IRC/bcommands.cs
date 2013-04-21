@@ -15,9 +15,9 @@ namespace IRC
             string[] args = message.TrimEnd().Split(' ');
             Console.WriteLine("A command was used!");
             int lnth = args.Length;
-            string switchmess = args[0];
+            string command_check = args[0];
 
-            switch (switchmess)
+            switch (command_check)
             {
                 case "u":
                     u.umcf(args, lnth, channel, nick, irc);
@@ -41,6 +41,9 @@ namespace IRC
 
                 case "divide":
                     division.divide(args, lnth, channel, nick, irc);
+                    break;
+                case "bunnywaffle":
+                    bunny.waffle(channel, irc);
                     break;
 
                 //All hardcoded, non class commands
