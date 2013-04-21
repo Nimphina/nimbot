@@ -9,7 +9,7 @@ namespace IRC
     class bcommands
     {
 
-        public static void bc(string botop, string channel, string nick, string message, IrcClient irc)
+        public static void bc(string botop, string channel, string nick, string message, string version, IrcClient irc)
         {
 
             string[] args = message.TrimEnd().Split(' ');
@@ -20,30 +20,30 @@ namespace IRC
             switch (switchmess)
             {
                 case "u":
-					u.umcf(args, lnth, channel, nick, irc);
+                    u.umcf(args, lnth, channel, nick, irc);
                     break;
 
                 case "reddit":
-					redditclass.reddit(args, lnth, channel, nick, irc);
+                    redditclass.reddit(args, lnth, channel, nick, irc);
                     break;
 
-				case "add":
-					addition.add(args, lnth, channel, nick, irc);
+                case "add":
+                    addition.add(args, lnth, channel, nick, irc);
                     break;
 
                 case "minus":
-					subtraction.minus(args, lnth, channel, nick, irc);
-					break;
+                    subtraction.minus(args, lnth, channel, nick, irc);
+                    break;
 
                 case "multiply":
-					multiplication.multi(args, lnth, channel, nick, irc);
+                    multiplication.multi(args, lnth, channel, nick, irc);
                     break;
 
                 case "divide":
-				division.divide(args, lnth, channel, nick, irc);
+                    division.divide(args, lnth, channel, nick, irc);
                     break;
 
-				//All hardcoded, non class commands
+                //All hardcoded, non class commands
                 case "Ping":
                 case "ping":
                     Console.WriteLine("ping command");
@@ -52,6 +52,10 @@ namespace IRC
 
                 case "info":
                     irc.SendMessage(SendType.Message, channel, "I am a bot written by Nimphina, very messily written using the SmartIrc4net lib for irc stuff. Sauce code: http://github.com/Nimphina/Nimbot", Priority.High);
+                    break;
+
+                case "version":
+                    irc.SendMessage(SendType.Message, channel, version, Priority.High);
                     break;
 
                 case "quit":
@@ -63,7 +67,7 @@ namespace IRC
                     }
                     else
                     {
-						Console.WriteLine("Quit command issed by {0}", nick);
+                        Console.WriteLine("Quit command issed by {0}", nick);
                         irc.SendMessage(SendType.Message, channel, "You are not allowed to issue that command :C", Priority.High);
                         Console.WriteLine("Unauthorized user using quit, suggesting immediate extermination");
                     }
@@ -107,10 +111,10 @@ namespace IRC
                             irc.SendMessage(SendType.Message, channel, string.Format("[{0}]", consolemessage), Priority.High);
                         }
                     }
-					else
-					{
-						irc.SendMessage(SendType.Message, channel, "You are not allowed to issue that command :C", Priority.High);
-					}
+                    else
+                    {
+                        irc.SendMessage(SendType.Message, channel, "You are not allowed to issue that command :C", Priority.High);
+                    }
                     break;
             }
         }

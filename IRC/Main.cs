@@ -9,52 +9,68 @@ namespace IRC
     class ClientDemo
     {
         public static IrcClient irc = new IrcClient();
-        public string server = "irc.esper.net";
-        private int port = 6667;
-        private string rootchannel = "#botspam";
-        public const string botop = "Nimphina";
-        public const string version = "dev-1.0.11";
-        public string botname = "Hershey";
+        public string server;
+        public int port;
+        public string rootchannel;
+        public string botop;
+        public string botname;
+        public string version = "dev-1.0.13";
+        public string opsymbol = "#";
+
 
         public static void Main()
         {
-
             Console.Title = "Nimbot terminal";
-
-            /*  try
-              {
-                  TextReader reader = new StreamReader("config");
-                  reader.ReadLine();
-                  string getsetting = reader.ReadLine();
-                  Console.WriteLine(getsetting);
-                  reader.Close();
-              }
-              catch (Exception e)
-              {
-                  Console.WriteLine(e.Message);
-                  Console.WriteLine("Creating a blank config file");
-                  StreamWriter writer = new StreamWriter("config");
-                  writer.WriteLine("Server:");
-                  writer.WriteLine(" ");
-                  writer.WriteLine("Port:");
-                  writer.WriteLine(" ");
-                  writer.WriteLine("Bot nick:");
-                  writer.WriteLine(" ");
-                  writer.WriteLine("Botop:");
-                  writer.WriteLine(" ");
-                  writer.WriteLine("Command char:");
-                  writer.WriteLine(" ");
-                  writer.Close();
-                  Console.WriteLine("Now exiting");
-                  Console.ReadLine();
-                  Environment.Exit(0);
-              } */
-
             ClientDemo demo = new ClientDemo();
         }
 
         public ClientDemo()
         {
+
+            try
+            {
+                TextReader reader = new StreamReader("config");
+                reader.ReadLine();
+                server = reader.ReadLine();
+                reader.ReadLine();
+                string portstring = reader.ReadLine();
+                port = int.Parse(portstring);
+                reader.ReadLine();
+                rootchannel = reader.ReadLine();
+                reader.ReadLine();
+                botname = reader.ReadLine();
+                reader.ReadLine();
+                botop = reader.ReadLine();
+                reader.Close();
+            }
+            catch (FileNotFoundException)
+            {
+                Console.WriteLine("Creating a blank config file");
+                StreamWriter writer = new StreamWriter("config");
+                writer.WriteLine("Server:");
+                writer.WriteLine(" ");
+                writer.WriteLine("Port:");
+                writer.WriteLine(" ");
+                writer.WriteLine("Root channel:");
+                writer.WriteLine(" ");
+                writer.WriteLine("Bot nick:");
+                writer.WriteLine(" ");
+                writer.WriteLine("Botop:");
+                writer.WriteLine(" ");
+                writer.WriteLine("Command char:");
+                writer.WriteLine(" ");
+                writer.Close();
+                Console.WriteLine("Now exiting");
+                Console.ReadLine();
+                Environment.Exit(0);
+            }
+            catch (FormatException)
+            {
+                Console.WriteLine("Some settings were incorrect in the config file, make sure the port is just numerals not letters i.e. 6667");
+                Console.ReadLine();
+                Environment.Exit(2);
+            }
+
             irc.OnConnected += new EventHandler(OnConnected);
             irc.OnConnecting += new EventHandler(OnConnecting);
             irc.OnPing += new PingEventHandler(OnPing);
@@ -67,7 +83,7 @@ namespace IRC
             }
             catch (Exception e)
             {
-                Console.Write("Failed to connect:n" + e.Message);
+                Console.Write("Failed to connect: " + e.Message);
                 Console.ReadKey();
             }
         }
@@ -75,7 +91,7 @@ namespace IRC
         void OnConnecting(object sender, EventArgs e)
         {
             Console.WriteLine("Starting Nimbot version: {0} ", version);
-            Console.WriteLine("Botop: {0}, Command char: {1},", botop, "#");
+            Console.WriteLine("Botop: {0}, Command char: {1}", botop, "#");
             Console.WriteLine(" ");
             Console.WriteLine("Connecting to server {0} on port {1}.", server, port);
         }
@@ -97,18 +113,16 @@ namespace IRC
 
         public void OnChannelMessage(object sender, IrcEventArgs e)
         {
-            Console.WriteLine(e.Data.Type + ":");
             Console.WriteLine("(" + e.Data.Channel + ") <" + e.Data.Nick + "> " + e.Data.Message);
-            string opsymbol = "#";
-            string channel = e.Data.Channel;
 
+            string channel = e.Data.Channel;
             string message = e.Data.Message;
             string nick = e.Data.Nick;
 
             if (e.Data.Message.StartsWith(opsymbol))
             {
-                message = message.Trim(new Char[] { '#' });
-                bcommands.bc(botop, channel, nick, message, irc);
+                message = message.Trim(new Char[] { '#' }); //will have to find a way for this to work with the varibles
+                bcommands.bc(botop, channel, nick, message, version, irc);
             }
 
             if (e.Data.Nick == "Ralph")
@@ -119,19 +133,19 @@ namespace IRC
 
             if (e.Data.Message == "What is love?")
             {
-
                 irc.SendMessage(SendType.Message, channel, "Baby don't hurt me", Priority.High);
             }
+
             if (e.Data.Message == "Hodor!")
             {
-
                 irc.SendMessage(SendType.Message, channel, "Oh shut up", Priority.High);
             }
+
             if (e.Data.Message == "The war z")
             {
-
                 irc.SendMessage(SendType.Message, channel, "http://www.youtube.com/watch?v=RtKAm3nzg6I", Priority.High);
             }
+
             if (e.Data.Message == "Hello" || e.Data.Message == "hello" || e.Data.Message == "Hi" || e.Data.Message == "hi")
             {
 
