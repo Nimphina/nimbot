@@ -14,7 +14,7 @@ namespace IRC
         public string rootchannel;
         public string botop;
         public string botname;
-        public string version = "dev-1.0.15";
+        public string version = "dev-1.0.16";
         public string opsymbol = "#";
 
 
@@ -30,37 +30,58 @@ namespace IRC
             try
             {
                 TextReader reader = new StreamReader("config.conf");
-                reader.ReadLine();
+                reader.ReadLine(); //skip server title, get server
                 server = reader.ReadLine();
-                reader.ReadLine();
-                string portstring = reader.ReadLine();
+                
+                reader.ReadLine(); //get port
+                string portstring = reader.ReadLine(); 
                 port = int.Parse(portstring);
-                reader.ReadLine();
+                
+                reader.ReadLine(); //get root channel
                 rootchannel = reader.ReadLine();
-                reader.ReadLine();
+                
+                reader.ReadLine(); //get botname
                 botname = reader.ReadLine();
-                reader.ReadLine();
+                
+                reader.ReadLine(); //get botop
                 botop = reader.ReadLine();
+                
+                reader.ReadLine(); //get opsymbol
+                opsymbol = reader.ReadLine();
                 reader.Close();
             }
             catch (FileNotFoundException)
             {
                 Console.WriteLine("Creating a blank config file");
-                StreamWriter writer = new StreamWriter("config");
+
+                StreamWriter writer = new StreamWriter("config.conf");
                 writer.WriteLine("Server:");
-                writer.WriteLine(" ");
+                Console.WriteLine("What server are you connecting to?");
+                string writestring = Console.ReadLine();
+                writer.WriteLine(writestring);
+                Console.WriteLine("What port are you connecting to?");
+                writestring = Console.ReadLine();
                 writer.WriteLine("Port:");
-                writer.WriteLine(" ");
+                writer.WriteLine(writestring);
+                Console.WriteLine("What is the root channel?");
+                writestring = Console.ReadLine();
                 writer.WriteLine("Root channel:");
-                writer.WriteLine(" ");
+                writer.WriteLine(writestring);
+                Console.WriteLine("What is the bot's nick?");
+                writestring = Console.ReadLine();
                 writer.WriteLine("Bot nick:");
-                writer.WriteLine(" ");
+                writer.WriteLine(writestring);
+                Console.WriteLine("Who is the bot operator?");
+                writestring = Console.ReadLine();
                 writer.WriteLine("Botop:");
-                writer.WriteLine(" ");
+                writer.WriteLine(writestring);
+                Console.WriteLine("What is the command char?");
+                writestring = Console.ReadLine();
                 writer.WriteLine("Command char:");
-                writer.WriteLine(" ");
+                writer.WriteLine(writestring);
                 writer.Close();
-                Console.WriteLine("Now exiting");
+
+                Console.WriteLine("Now exiting, please restart nimbot");
                 Console.ReadLine();
                 Environment.Exit(0);
             }
@@ -70,12 +91,16 @@ namespace IRC
                 Console.ReadLine();
                 Environment.Exit(2);
             }
-
+            //Setting some eventhandlers
             irc.OnConnected += new EventHandler(OnConnected);
             irc.OnConnecting += new EventHandler(OnConnecting);
             irc.OnPing += new PingEventHandler(OnPing);
             irc.OnDisconnected += new EventHandler(OnDisconnected);
             irc.OnChannelMessage += new IrcEventHandler(OnChannelMessage);
+            irc.OnOp += new OpEventHandler(OnOp);
+            irc.OnQueryMessage += new IrcEventHandler(OnQueryMessage);
+            irc.OnBan += new BanEventHandler(OnBan);
+            irc.OnTopicChange += new TopicChangeEventHandler(OnTopicChange);
 
             try
             {
@@ -91,7 +116,7 @@ namespace IRC
         void OnConnecting(object sender, EventArgs e)
         {
             Console.WriteLine("Starting Nimbot version: {0} ", version);
-            Console.WriteLine("Botop: {0}, Command char: {1}", botop, "#");
+            Console.WriteLine("Botop: {0}, Command char: {1}", botop, opsymbol);
             Console.WriteLine(" ");
             Console.WriteLine("Connecting to server {0} on port {1}.", server, port);
         }
@@ -103,12 +128,13 @@ namespace IRC
                 Environment.Exit(0);
             }
             Console.WriteLine("Connected to {0}.", server);
-            //irc.SendMessage(SendType.Message, channel, "Joined: " + channel + " Bot op is: " + botop, Priority.BelowMedium);
 			Console.WriteLine("Enter your ident pass");
+
 			string pass = Console.ReadLine();
-            irc.Login(botname, botname, 0, botname);
+            irc.Login(botname, botname, 0, string.Format("{0}-bot", botname));
             irc.RfcJoin(rootchannel);
 			irc.SendMessage(SendType.Message, "NickServ", string.Format("identify Smush {0}", pass), Priority.High);
+
             Console.WriteLine("Joining {0}.", rootchannel);
             irc.Listen(true);
         }
@@ -123,7 +149,8 @@ namespace IRC
 
             if (e.Data.Message.StartsWith(opsymbol))
             {
-                message = message.Trim(new Char[] { '#' }); //will have to find a way for this to work with the varibles
+                char opsymbolchar = Convert.ToChar(opsymbol);
+                message = message.Trim(new Char[] { opsymbolchar }); //will have to find a way for this to work with the varibles
                 bcommands.bc(botop, channel, nick, message, server, port, version, irc);
             }
 
@@ -163,6 +190,28 @@ namespace IRC
         void OnPing(object sender, PingEventArgs e)
         {
             Console.WriteLine("Responded to ping at {0}.", DateTime.Now.ToShortTimeString());
+        }
+        
+        void OnOp(object sender, OpEventArgs e)
+        {
+            irc.SendMessage(SendType.Message, e.Channel, string.Format("Whoop!"), Priority.High);
+        }
+
+        void OnQueryMessage(object sender, IrcEventArgs e)
+        {
+            Console.WriteLine("Query: >" + e.Data.Nick +"<: " + e.Data.Message);
+        }
+        
+        void OnBan(object sender, BanEventArgs e)
+        {
+            Console.WriteLine("Bot was banned from: {0}", e.Data.Channel);
+            irc.RfcPart(e.Data.Channel);
+        }
+
+        void OnTopicChange(object sender, TopicChangeEventArgs e)
+        {
+            Console.WriteLine("{0} changed {1}, topic to {2}",e.Who, e.Channel, e.NewTopic);
+
         }
     }
 }

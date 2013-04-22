@@ -61,12 +61,16 @@ namespace IRC
                     irc.SendMessage(SendType.Message, channel, version, Priority.High);
                     break;
 
+                case "gettime":
+                    irc.SendMessage(SendType.Message, channel, string.Format("Bot server time is {0}", DateTime.Now.ToShortTimeString()), Priority.High);
+                    break;
+
                 case "quit":
                     if (nick == botop)
                     {
                         Console.WriteLine("Quit command issed by {0}", nick);
                         irc.SendMessage(SendType.Message, channel, "Qwitting", Priority.High);
-			irc.Disconnect();
+                        irc.Disconnect();
                         Environment.Exit(0);
                     }
                     else
@@ -98,103 +102,103 @@ namespace IRC
                     irc.RfcPart(args[1]);
                     break;
 
-				case "nick":
-					irc.RfcNick(args[1]);
-					break;
+                case "nick":
+                    irc.RfcNick(args[1]);
+                    break;
 
-				case "kick":
-					if(nick == botop)
-					{
-						if(lnth == 2)
-						{
-							irc.RfcKick(channel, args[1]);
-						}
-						else if (lnth == 3)
-						{
-							irc.RfcKick(channel, args[1], args[2]);
-						}	
-						else
-						{
-							irc.SendMessage(SendType.Message, channel, "Who do you want to kick?", Priority.High);
-						}
-					}
-					else
-					{
-						irc.SendMessage(SendType.Message, channel, "You are not authorised to perform that command", Priority.High);
-					}
-					break;
+                case "kick":
+                    if (nick == botop)
+                    {
+                        if (lnth == 2)
+                        {
+                            irc.RfcKick(channel, args[1]);
+                        }
+                        else if (lnth == 3)
+                        {
+                            irc.RfcKick(channel, args[1], args[2]);
+                        }
+                        else
+                        {
+                            irc.SendMessage(SendType.Message, channel, "Who do you want to kick?", Priority.High);
+                        }
+                    }
+                    else
+                    {
+                        irc.SendMessage(SendType.Message, channel, "You are not authorised to perform that command", Priority.High);
+                    }
+                    break;
 
-				case "op":
-					if(nick == botop)
-					{
-						if(lnth == 2)
-						{
-							irc.Op(channel, args[1]);
-						}
-						else
-						{
-							irc.SendMessage(SendType.Message, channel, "Who do you want to op?", Priority.High);
-						}
-					}
-					else
-					{
-						irc.SendMessage(SendType.Message, channel, "You are not authorised to perform that command", Priority.High);
-					}
-					break;
+                case "op":
+                    if (nick == botop)
+                    {
+                        if (lnth == 2)
+                        {
+                            irc.Op(channel, args[1]);
+                        }
+                        else
+                        {
+                            irc.SendMessage(SendType.Message, channel, "Who do you want to op?", Priority.High);
+                        }
+                    }
+                    else
+                    {
+                        irc.SendMessage(SendType.Message, channel, "You are not authorised to perform that command", Priority.High);
+                    }
+                    break;
 
-				case "deop":
-					if(nick == botop)
-					{
-						if(lnth == 2)
-						{
-							irc.Deop(channel, args[1]);
-						}
-						else
-						{
-							irc.SendMessage(SendType.Message, channel, "Who do you want to deop?", Priority.High);
-						}
-					}
-					else
-					{
-						irc.SendMessage(SendType.Message, channel, "You are not authorised to perform that command", Priority.High);
-					}
-					break;
+                case "deop":
+                    if (nick == botop)
+                    {
+                        if (lnth == 2)
+                        {
+                            irc.Deop(channel, args[1]);
+                        }
+                        else
+                        {
+                            irc.SendMessage(SendType.Message, channel, "Who do you want to deop?", Priority.High);
+                        }
+                    }
+                    else
+                    {
+                        irc.SendMessage(SendType.Message, channel, "You are not authorised to perform that command", Priority.High);
+                    }
+                    break;
 
-				case "devoice":
-					if(nick == botop)
-					{
-						if(lnth == 2)
-						{
-							irc.Devoice(channel, args[1]);
-						}
-						else
-						{
-							irc.SendMessage(SendType.Message, channel, "Who do you want to devoice?", Priority.High);
-						}
-					}
-					else
-					{
-						irc.SendMessage(SendType.Message, channel, "You are not authorised to perform that command", Priority.High);
-					}
-					break;
+                case "devoice":
+                    if (nick == botop)
+                    {
+                        if (lnth == 2)
+                        {
+                            irc.Devoice(channel, args[1]);
+                        }
+                        else
+                        {
+                            irc.SendMessage(SendType.Message, channel, "Who do you want to devoice?", Priority.High);
+                        }
+                    }
+                    else
+                    {
+                        irc.SendMessage(SendType.Message, channel, "You are not authorised to perform that command", Priority.High);
+                    }
+                    break;
 
-				case "voice":
-					if(nick == botop)
-					{
-						if(lnth == 2)
-						{
-							irc.Voice(channel, args[1]);
-						}
-						else
-						{
-							irc.SendMessage(SendType.Message, channel, "Who do you want to voice?", Priority.High);
-						}
-					}
-					else
-					{
-						irc.SendMessage(SendType.Message, channel, "You are not authorised to perform that command", Priority.High);
-					}
-					break;
+                case "voice":
+                    if (nick == botop)
+                    {
+                        if (lnth == 2)
+                        {
+                            irc.Voice(channel, args[1]);
+                        }
+                        else
+                        {
+                            irc.SendMessage(SendType.Message, channel, "Who do you want to voice?", Priority.High);
+                        }
+                    }
+                    else
+                    {
+                        irc.SendMessage(SendType.Message, channel, "You are not authorised to perform that command", Priority.High);
+                    }
+                    break;
 
                 case "condebug":
                     if (nick == botop)
