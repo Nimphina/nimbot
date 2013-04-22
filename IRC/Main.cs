@@ -14,7 +14,7 @@ namespace IRC
         public string rootchannel;
         public string botop;
         public string botname;
-        public string version = "dev-1.0.17";
+        public string version = "dev-1.0.18";
         public string opsymbol = "#";
 
 
@@ -147,7 +147,11 @@ namespace IRC
 
         public void OnChannelMessage(object sender, IrcEventArgs e)
         {
-            Console.WriteLine("(" + e.Data.Channel + ") <" + e.Data.Nick + "> " + e.Data.Message);
+			Console.WriteLine("[" + DateTime.Now.ToShortTimeString()+ "]" + "(" + e.Data.Channel + ") <" + e.Data.Nick + "> " + e.Data.Message);
+
+			StreamWriter writer = new StreamWriter(e.Data.Channel + ".log", true);
+			writer.WriteLine("[" + DateTime.Now.ToShortTimeString()+ "]" + "(" + e.Data.Channel + ") <" + e.Data.Nick + "> " + e.Data.Message);
+			writer.Close();
 
             string channel = e.Data.Channel;
             string message = e.Data.Message;
