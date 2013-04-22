@@ -13,7 +13,7 @@ namespace IRC
         {
 
             string[] args = message.TrimEnd().Split(' ');
-            Console.WriteLine("A command was used!");
+            Console.WriteLine("Command char detected!");
             int lnth = args.Length;
             string command_check = args[0];
 
@@ -66,7 +66,7 @@ namespace IRC
                     {
                         Console.WriteLine("Quit command issed by {0}", nick);
                         irc.SendMessage(SendType.Message, channel, "Qwitting", Priority.High);
-						irc.Disconnect();
+			irc.Disconnect();
                         Environment.Exit(0);
                     }
                     else
@@ -215,7 +215,7 @@ namespace IRC
                     }
                     else
                     {
-                        irc.SendMessage(SendType.Message, channel, "You are not allowed to issue that command :C", Priority.High);
+                        irc.SendMessage(SendType.Message, channel, "You are not allowed to perform that command!", Priority.High);
                     }
                     break;
             }
