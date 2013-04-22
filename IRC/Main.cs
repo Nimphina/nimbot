@@ -29,7 +29,7 @@ namespace IRC
 
             try
             {
-                TextReader reader = new StreamReader("config");
+                TextReader reader = new StreamReader("config.conf");
                 reader.ReadLine();
                 server = reader.ReadLine();
                 reader.ReadLine();
