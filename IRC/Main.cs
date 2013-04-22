@@ -14,7 +14,7 @@ namespace IRC
         public string rootchannel;
         public string botop;
         public string botname;
-        public string version = "dev-1.0.14";
+        public string version = "dev-1.0.15";
         public string opsymbol = "#";
 
 
