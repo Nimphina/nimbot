@@ -104,9 +104,11 @@ namespace IRC
             }
             Console.WriteLine("Connected to {0}.", server);
             //irc.SendMessage(SendType.Message, channel, "Joined: " + channel + " Bot op is: " + botop, Priority.BelowMedium);
-
+			Console.WriteLine("Enter your ident pass");
+			string pass = Console.ReadLine();
             irc.Login(botname, botname, 0, botname);
             irc.RfcJoin(rootchannel);
+			irc.SendMessage(SendType.Message, "NickServ", string.Format("identify Smush {0}", pass), Priority.High);
             Console.WriteLine("Joining {0}.", rootchannel);
             irc.Listen(true);
         }
@@ -122,7 +124,7 @@ namespace IRC
             if (e.Data.Message.StartsWith(opsymbol))
             {
                 message = message.Trim(new Char[] { '#' }); //will have to find a way for this to work with the varibles
-                bcommands.bc(botop, channel, nick, message, version, irc);
+                bcommands.bc(botop, channel, nick, message, server, port, version, irc);
             }
 
             if (e.Data.Nick == "Ralph")
