@@ -36,7 +36,7 @@ namespace IRC
 				} 
 				else 
 				{
-					irc.SendMessage (SendType.Message, channel, "placholder message", Priority.High);
+					irc.SendMessage (SendType.Message, channel, "Neeeds some operands to work with!", Priority.High);
 				}
 			} 
 			catch (Exception e) 
