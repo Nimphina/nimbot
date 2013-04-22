@@ -12,6 +12,7 @@ TestResults
 *.user
 *.sln.docstates
 config.conf
+#*
 
 # Build results
 [Dd]ebug/

@@ -14,7 +14,7 @@ namespace IRC
         public string rootchannel;
         public string botop;
         public string botname;
-        public string version = "dev-1.0.16";
+        public string version = "dev-1.0.17";
         public string opsymbol = "#";
 
 
@@ -59,26 +59,32 @@ namespace IRC
                 Console.WriteLine("What server are you connecting to?");
                 string writestring = Console.ReadLine();
                 writer.WriteLine(writestring);
+
                 Console.WriteLine("What port are you connecting to?");
                 writestring = Console.ReadLine();
                 writer.WriteLine("Port:");
                 writer.WriteLine(writestring);
+
                 Console.WriteLine("What is the root channel?");
                 writestring = Console.ReadLine();
                 writer.WriteLine("Root channel:");
                 writer.WriteLine(writestring);
+
                 Console.WriteLine("What is the bot's nick?");
                 writestring = Console.ReadLine();
                 writer.WriteLine("Bot nick:");
                 writer.WriteLine(writestring);
+
                 Console.WriteLine("Who is the bot operator?");
                 writestring = Console.ReadLine();
                 writer.WriteLine("Botop:");
                 writer.WriteLine(writestring);
+
                 Console.WriteLine("What is the command char?");
                 writestring = Console.ReadLine();
                 writer.WriteLine("Command char:");
                 writer.WriteLine(writestring);
+
                 writer.Close();
 
                 Console.WriteLine("Now exiting, please restart nimbot");

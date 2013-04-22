@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using Meebey.SmartIrc4net;
@@ -19,29 +20,36 @@ namespace IRC
 
             switch (command_check)
             {
+                case "U":
                 case "u":
                     u.umcf(args, lnth, channel, nick, irc);
                     break;
-
+                
+                case "Reddit":
                 case "reddit":
                     redditclass.reddit(args, lnth, channel, nick, irc);
                     break;
-
+                
+                case "Add":
                 case "add":
                     addition.add(args, lnth, channel, nick, irc);
                     break;
-
+                
+                case "Minus":
                 case "minus":
                     subtraction.minus(args, lnth, channel, nick, irc);
                     break;
-
+                
+                case "Multiply":
                 case "multiply":
                     multiplication.multi(args, lnth, channel, nick, irc);
                     break;
-
+                
+                case "Divide":
                 case "divide":
                     division.divide(args, lnth, channel, nick, irc);
                     break;
+
                 case "bunnywaffle":
                     bunny.waffle(channel, irc);
                     break;
@@ -91,6 +99,9 @@ namespace IRC
                     if (args[1] != "#fofftopic")
                     {
                         irc.RfcJoin(args[1]);
+                        StreamWriter writer = new StreamWriter(args[1]);
+                        writer.WriteLine(args[1]);
+                        writer.Close();
                     }
                     else
                     {
@@ -106,98 +117,24 @@ namespace IRC
                     irc.RfcNick(args[1]);
                     break;
 
-                case "kick":
-                    if (nick == botop)
-                    {
-                        if (lnth == 2)
-                        {
-                            irc.RfcKick(channel, args[1]);
-                        }
-                        else if (lnth == 3)
-                        {
-                            irc.RfcKick(channel, args[1], args[2]);
-                        }
-                        else
-                        {
-                            irc.SendMessage(SendType.Message, channel, "Who do you want to kick?", Priority.High);
-                        }
-                    }
-                    else
-                    {
-                        irc.SendMessage(SendType.Message, channel, "You are not authorised to perform that command", Priority.High);
-                    }
-                    break;
-
+                //Bot op only commands
                 case "op":
-                    if (nick == botop)
-                    {
-                        if (lnth == 2)
-                        {
-                            irc.Op(channel, args[1]);
-                        }
-                        else
-                        {
-                            irc.SendMessage(SendType.Message, channel, "Who do you want to op?", Priority.High);
-                        }
-                    }
-                    else
-                    {
-                        irc.SendMessage(SendType.Message, channel, "You are not authorised to perform that command", Priority.High);
-                    }
+                    opitems.op(channel, botop, nick, args, lnth, irc);
                     break;
 
                 case "deop":
-                    if (nick == botop)
-                    {
-                        if (lnth == 2)
-                        {
-                            irc.Deop(channel, args[1]);
-                        }
-                        else
-                        {
-                            irc.SendMessage(SendType.Message, channel, "Who do you want to deop?", Priority.High);
-                        }
-                    }
-                    else
-                    {
-                        irc.SendMessage(SendType.Message, channel, "You are not authorised to perform that command", Priority.High);
-                    }
-                    break;
-
-                case "devoice":
-                    if (nick == botop)
-                    {
-                        if (lnth == 2)
-                        {
-                            irc.Devoice(channel, args[1]);
-                        }
-                        else
-                        {
-                            irc.SendMessage(SendType.Message, channel, "Who do you want to devoice?", Priority.High);
-                        }
-                    }
-                    else
-                    {
-                        irc.SendMessage(SendType.Message, channel, "You are not authorised to perform that command", Priority.High);
-                    }
+                    opitems.deop(channel, botop, nick, args, lnth, irc);
                     break;
 
                 case "voice":
-                    if (nick == botop)
-                    {
-                        if (lnth == 2)
-                        {
-                            irc.Voice(channel, args[1]);
-                        }
-                        else
-                        {
-                            irc.SendMessage(SendType.Message, channel, "Who do you want to voice?", Priority.High);
-                        }
-                    }
-                    else
-                    {
-                        irc.SendMessage(SendType.Message, channel, "You are not authorised to perform that command", Priority.High);
-                    }
+                    opitems.voice(channel, botop, nick, args, lnth, irc);
+                    break;
+                case "devoice":
+                    opitems.devoice(channel, botop, nick, args, lnth, irc);
+                    break;
+
+                case "kick":
+                    opitems.kick(channel, botop, nick, args, lnth, irc);
                     break;
 
                 case "condebug":
