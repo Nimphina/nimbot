@@ -14,7 +14,7 @@ namespace IRC
         public string rootchannel;
         public string botop;
         public string botname;
-        public string version = "dev-1.0.18";
+        public string version = "dev-1.0.19";
         public string opsymbol = "#";
 
 
@@ -26,7 +26,6 @@ namespace IRC
 
         public ClientDemo()
         {
-
             try
             {
                 TextReader reader = new StreamReader("config.conf");
@@ -127,69 +126,83 @@ namespace IRC
             Console.WriteLine("Connecting to server {0} on port {1}.", server, port);
         }
 
-        void OnConnected(object sender, EventArgs e)
-        {
-            if (rootchannel == "fofftopic")
-            {
-                Environment.Exit(0);
-            }
-            Console.WriteLine("Connected to {0}.", server);
-			Console.WriteLine("Enter your ident pass");
+        void OnConnected (object sender, EventArgs e)
+		{
+			Console.WriteLine ("Connected to {0}.", server);
 
-			string pass = Console.ReadLine();
-            irc.Login(botname, botname, 0, string.Format("{0}-bot", botname));
-            irc.RfcJoin(rootchannel);
+			Console.WriteLine ("Enter your ident pass");
+			string pass = Console.ReadLine ();
+
+			irc.Login (botname, botname, 0, string.Format ("{0}-bot", botname));
+
+			StreamReader reader = new StreamReader ("channel.list");
+			string [] channel_list = new string [9];
+			int i = 0;
+			irc.RfcJoin(rootchannel);
+
+			while (reader.EndOfStream == false) 
+			{
+				channel_list[i] = reader.ReadLine();
+				i++;
+			}
+
+			int num_of_chans = channel_list.Length;
+			for (i = 0; i < num_of_chans; i++)
+			{
+				irc.RfcJoin(channel_list[i]);
+			}
+			reader.Close();
+
+
 			irc.SendMessage(SendType.Message, "NickServ", string.Format("identify Smush {0}", pass), Priority.High);
 
             Console.WriteLine("Joining {0}.", rootchannel);
             irc.Listen(true);
         }
 
-        public void OnChannelMessage(object sender, IrcEventArgs e)
-        {
-			Console.WriteLine("[" + DateTime.Now.ToShortTimeString()+ "]" + "(" + e.Data.Channel + ") <" + e.Data.Nick + "> " + e.Data.Message);
+        public void OnChannelMessage (object sender, IrcEventArgs e)
+		{
+			Console.WriteLine ("[" + DateTime.Now.ToShortTimeString () + "]" + "(" + e.Data.Channel + ") <" + e.Data.Nick + "> " + e.Data.Message);
 
-			StreamWriter writer = new StreamWriter(e.Data.Channel + ".log", true);
-			writer.WriteLine("[" + DateTime.Now.ToShortTimeString()+ "]" + "(" + e.Data.Channel + ") <" + e.Data.Nick + "> " + e.Data.Message);
-			writer.Close();
+			StreamWriter writer = new StreamWriter (e.Data.Channel + ".log", true);
+			writer.WriteLine ("[" + DateTime.Now.ToShortTimeString () + "]" + "(" + e.Data.Channel + ") <" + e.Data.Nick + "> " + e.Data.Message);
+			writer.Close ();
 
-            string channel = e.Data.Channel;
-            string message = e.Data.Message;
-            string nick = e.Data.Nick;
+			string channel = e.Data.Channel;
+			string message = e.Data.Message;
+			string nick = e.Data.Nick;
 
-            if (e.Data.Message.StartsWith(opsymbol))
-            {
-                char opsymbolchar = Convert.ToChar(opsymbol);
-                message = message.Trim(new Char[] { opsymbolchar }); //will have to find a way for this to work with the varibles
-                bcommands.bc(botop, channel, nick, message, server, port, version, irc);
-            }
+			if (e.Data.Message.StartsWith (opsymbol)) {
+				char opsymbolchar = Convert.ToChar (opsymbol);
+				message = message.Trim (new Char[] { opsymbolchar }); //will have to find a way for this to work with the varibles
+				bcommands.bc (botop, channel, nick, message, server, port, version, irc);
+			}
 
-            if (e.Data.Nick == "Ralph")
-            {
-                irc.SendMessage(SendType.Message, channel, "I hate Ralph and he hates me", Priority.High);
-                Console.WriteLine("RALPH SAID SHIT");
-            }
+			if (e.Data.Nick == "Ralph") {
+				irc.SendMessage (SendType.Message, channel, "I hate Ralph and he hates me", Priority.High);
+				Console.WriteLine ("RALPH SAID SHIT");
+			}
 
-            if (e.Data.Message == "What is love?")
-            {
-                irc.SendMessage(SendType.Message, channel, "Baby don't hurt me", Priority.High);
-            }
+			if (e.Data.Message == "What is love?") {
+				irc.SendMessage (SendType.Message, channel, "Baby don't hurt me", Priority.High);
+			}
 
-            if (e.Data.Message == "Hodor!")
-            {
-                irc.SendMessage(SendType.Message, channel, "Oh shut up", Priority.High);
-            }
+			if (e.Data.Message == "Hodor!") {
+				irc.SendMessage (SendType.Message, channel, "Oh shut up", Priority.High);
+			}
 
-            if (e.Data.Message == "The war z")
-            {
-                irc.SendMessage(SendType.Message, channel, "http://www.youtube.com/watch?v=RtKAm3nzg6I", Priority.High);
-            }
+			if (e.Data.Message == "The war z") {
+				irc.SendMessage (SendType.Message, channel, "http://www.youtube.com/watch?v=RtKAm3nzg6I", Priority.High);
+			}
 
-            if (e.Data.Message == "Hello" || e.Data.Message == "hello" || e.Data.Message == "Hi" || e.Data.Message == "hi")
-            {
+			if (e.Data.Message == "Hello" || e.Data.Message == "hello" || e.Data.Message == "Hi" || e.Data.Message == "hi") {
 
-                irc.SendMessage(SendType.Message, channel, string.Format("Hello {0}", e.Data.Nick), Priority.High);
-            }
+				irc.SendMessage (SendType.Message, channel, string.Format ("Hello {0}", e.Data.Nick), Priority.High);
+			}
+			if (e.Data.Message == string.Format ("Hello {0}, how are you?", botname) || e.Data.Message == string.Format ("How are you doing {0}?", botname)) 
+			{
+				irc.SendMessage (SendType.Message, channel, string.Format ("Hello {0}, I'm doing fine today, thanks", e.Data.Nick), Priority.High);
+			}
         }
 
         void OnDisconnected(object sender, EventArgs e)
@@ -210,6 +223,15 @@ namespace IRC
         void OnQueryMessage(object sender, IrcEventArgs e)
         {
             Console.WriteLine("Query: >" + e.Data.Nick +"<: " + e.Data.Message);
+            string message = e.Data.Message;
+            string nick = e.Data.Nick;
+
+            if (e.Data.Message.StartsWith(opsymbol))
+            {
+                char opsymbolchar = Convert.ToChar(opsymbol);
+                message = message.Trim(new Char[] { opsymbolchar });
+                bcommands.bc(botop, nick, nick, message, server, port, version, irc);
+            }
         }
         
         void OnBan(object sender, BanEventArgs e)

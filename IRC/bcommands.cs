@@ -99,7 +99,7 @@ namespace IRC
                     if (args[1] != "#fofftopic")
                     {
                         irc.RfcJoin(args[1]);
-                        StreamWriter writer = new StreamWriter(args[1]);
+                        StreamWriter writer = new StreamWriter("channel.list", true);
                         writer.WriteLine(args[1]);
                         writer.Close();
                     }
