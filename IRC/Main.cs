@@ -14,7 +14,7 @@ namespace IRC
         public string rootchannel;
         public string botop;
         public string botname;
-        public string version = "dev-1.0.19";
+        public string version = "dev-1.0.20";
         public string opsymbol = "#";
 
 
@@ -171,35 +171,35 @@ namespace IRC
 			string channel = e.Data.Channel;
 			string message = e.Data.Message;
 			string nick = e.Data.Nick;
+			message = message.Trim(new Char[] { '!', '?','.', '\'', });
 
-			if (e.Data.Message.StartsWith (opsymbol)) {
+			if (message.StartsWith (opsymbol)) {
 				char opsymbolchar = Convert.ToChar (opsymbol);
-				message = message.Trim (new Char[] { opsymbolchar }); //will have to find a way for this to work with the varibles
-				bcommands.bc (botop, channel, nick, message, server, port, version, irc);
+				message = message.Trim (new Char[] { opsymbolchar }); 
+				bcommands.bc (botop, channel, nick, message, server, port, version, ref botname, irc);
 			}
 
-			if (e.Data.Nick == "Ralph") {
+			if (nick == "Ralph") {
 				irc.SendMessage (SendType.Message, channel, "I hate Ralph and he hates me", Priority.High);
 				Console.WriteLine ("RALPH SAID SHIT");
 			}
 
-			if (e.Data.Message == "What is love?") {
+			if (message == "What is love") 
+			{
 				irc.SendMessage (SendType.Message, channel, "Baby don't hurt me", Priority.High);
 			}
 
-			if (e.Data.Message == "Hodor!") {
+			if (message == "Hodor") 
+			{
 				irc.SendMessage (SendType.Message, channel, "Oh shut up", Priority.High);
 			}
 
-			if (e.Data.Message == "The war z") {
-				irc.SendMessage (SendType.Message, channel, "http://www.youtube.com/watch?v=RtKAm3nzg6I", Priority.High);
-			}
-
-			if (e.Data.Message == "Hello" || e.Data.Message == "hello" || e.Data.Message == "Hi" || e.Data.Message == "hi") {
-
+			if (message.ToLower() == "hello" || message.ToLower() == "hi") 
+			{
 				irc.SendMessage (SendType.Message, channel, string.Format ("Hello {0}", e.Data.Nick), Priority.High);
 			}
-			if (e.Data.Message == string.Format ("Hello {0}, how are you?", botname) || e.Data.Message == string.Format ("How are you doing {0}?", botname)) 
+
+			if (message.ToLower() == string.Format ("hello {0}, how are you", botname) || message.ToLower() == string.Format ("how are you doing {0}", botname)) 
 			{
 				irc.SendMessage (SendType.Message, channel, string.Format ("Hello {0}, I'm doing fine today, thanks", e.Data.Nick), Priority.High);
 			}
@@ -230,7 +230,7 @@ namespace IRC
             {
                 char opsymbolchar = Convert.ToChar(opsymbol);
                 message = message.Trim(new Char[] { opsymbolchar });
-                bcommands.bc(botop, nick, nick, message, server, port, version, irc);
+                bcommands.bc(botop, nick, nick, message, server, port, version, ref botname, irc);
             }
         }
         

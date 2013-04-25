@@ -10,7 +10,7 @@ namespace IRC
     class bcommands
     {
 
-        public static void bc(string botop, string channel, string nick, string message, string server, int port, string version, IrcClient irc)
+        public static void bc(string botop, string channel, string nick, string message, string server, int port, string version, ref string botname, IrcClient irc)
         {
 
             string[] args = message.TrimEnd().Split(' ');
@@ -114,7 +114,15 @@ namespace IRC
                     break;
 
                 case "nick":
-                    irc.RfcNick(args[1]);
+					if (nick == botop)
+					{
+	                    irc.RfcNick(args[1]);
+						botname = args[1];
+					}
+					else
+					{
+						irc.SendMessage(SendType.Message, channel, "You are not allowed to perform that command!", Priority.High);
+					}
                     break;
 
                 //Bot op only commands
