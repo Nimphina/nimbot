@@ -14,7 +14,7 @@ namespace IRC
         public string rootchannel;
         public string botop;
         public string botname;
-        public string version = "dev-1.0.20";
+        public string version = "dev-1.0.21";
         public string opsymbol = "#";
 
 
@@ -135,23 +135,31 @@ namespace IRC
 
 			irc.Login (botname, botname, 0, string.Format ("{0}-bot", botname));
 
-			StreamReader reader = new StreamReader ("channel.list");
-			string [] channel_list = new string [9];
-			int i = 0;
-			irc.RfcJoin(rootchannel);
+            try
+            {
+                StreamReader reader = new StreamReader("channel.list");
+                string[] channel_list = new string[9];
+                int i = 0;
+                irc.RfcJoin(rootchannel);
 
-			while (reader.EndOfStream == false) 
-			{
-				channel_list[i] = reader.ReadLine();
-				i++;
-			}
+                while (reader.EndOfStream == false)
+                {
+                    channel_list[i] = reader.ReadLine();
+                    i++;
+                }
 
-			int num_of_chans = channel_list.Length;
-			for (i = 0; i < num_of_chans; i++)
-			{
-				irc.RfcJoin(channel_list[i]);
-			}
-			reader.Close();
+                int num_of_chans = channel_list.Length;
+                for (i = 0; i < num_of_chans; i++)
+                {
+                    irc.RfcJoin(channel_list[i]);
+                }
+                reader.Close();
+            }
+            catch (FileNotFoundException)
+            {
+                StreamWriter writer = new StreamWriter("channel.list");
+                writer.Close();
+            }
 
 
 			irc.SendMessage(SendType.Message, "NickServ", string.Format("identify Smush {0}", pass), Priority.High);
