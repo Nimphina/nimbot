@@ -14,7 +14,7 @@ namespace IRC
         public string rootchannel;
         public string botop;
         public string botname;
-        public string version = "dev-1.0.21";
+        public string version = "dev-1.0.22";
         public string opsymbol = "#";
 
 
@@ -120,38 +120,33 @@ namespace IRC
 
         void OnConnecting(object sender, EventArgs e)
         {
-            Console.WriteLine("Starting Nimbot version: {0} ", version);
+            Console.WriteLine("Nimbot version: {0} ", version);
             Console.WriteLine("Botop: {0}, Command char: {1}", botop, opsymbol);
             Console.WriteLine(" ");
-            Console.WriteLine("Connecting to server {0} on port {1}.", server, port);
         }
 
         void OnConnected (object sender, EventArgs e)
 		{
-			Console.WriteLine ("Connected to {0}.", server);
-
-			Console.WriteLine ("Enter your ident pass");
-			string pass = Console.ReadLine ();
+			Console.WriteLine ("Connected to {0} on port {1}.", server, port);
 
 			irc.Login (botname, botname, 0, string.Format ("{0}-bot", botname));
 
             try
             {
                 StreamReader reader = new StreamReader("channel.list");
-                string[] channel_list = new string[9];
+                string[] channel_list = new string[10];
                 int i = 0;
-                irc.RfcJoin(rootchannel);
 
                 while (reader.EndOfStream == false)
                 {
                     channel_list[i] = reader.ReadLine();
-                    i++;
                 }
 
-                int num_of_chans = channel_list.Length;
-                for (i = 0; i < num_of_chans; i++)
+				Console.WriteLine("Joining {0}.", rootchannel);
+                foreach (string value in channel_list)
                 {
                     irc.RfcJoin(channel_list[i]);
+					Console.WriteLine("Joining {0}", channel_list[i]);
                 }
                 reader.Close();
             }
@@ -159,12 +154,14 @@ namespace IRC
             {
                 StreamWriter writer = new StreamWriter("channel.list");
                 writer.Close();
+				Console.WriteLine("Joining {0}.", rootchannel);
             }
+			finally
+			{
+				irc.RfcJoin(rootchannel);
+				Console.WriteLine("All channels joined successfully");
+			}
 
-
-			irc.SendMessage(SendType.Message, "NickServ", string.Format("identify Smush {0}", pass), Priority.High);
-
-            Console.WriteLine("Joining {0}.", rootchannel);
             irc.Listen(true);
         }
 

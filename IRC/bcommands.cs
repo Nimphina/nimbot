@@ -145,6 +145,15 @@ namespace IRC
                     opitems.kick(channel, botop, nick, args, lnth, irc);
                     break;
 
+				case "ident":
+					if (nick == botop)
+					{
+						Console.WriteLine ("Enter your ident pass");
+						string pass = Console.ReadLine ();
+						irc.SendMessage(SendType.Message, "NickServ", string.Format("identify Smush {0}", pass), Priority.High);
+					}
+					break;
+
                 case "condebug":
                     if (nick == botop)
                     {
