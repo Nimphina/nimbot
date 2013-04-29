@@ -140,6 +140,7 @@ namespace IRC
                 while (reader.EndOfStream == false)
                 {
                     channel_list[i] = reader.ReadLine();
+                    i++
                 }
 
 				Console.WriteLine("Joining {0}.", rootchannel);
