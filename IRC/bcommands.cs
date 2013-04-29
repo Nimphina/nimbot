@@ -67,12 +67,14 @@ namespace IRC
 
                 case "version":
                     irc.SendMessage(SendType.Message, channel, version, Priority.High);
+                    Console.WriteLine(version);
                     break;
 
                 case "gettime":
                     irc.SendMessage(SendType.Message, channel, string.Format("Bot server time is {0}", DateTime.Now.ToShortTimeString()), Priority.High);
                     break;
-
+		
+		case "q":
                 case "quit":
                     if (nick == botop)
                     {
@@ -110,7 +112,14 @@ namespace IRC
                     break;
 
                 case "part":
-                    irc.RfcPart(args[1]);
+                	if (lnth == 2)
+                	{
+                   		 irc.RfcPart(args[1]);
+                	}
+                	else if (lnth >= 3)
+                	{
+                		irc.RfcPart(args[1] + args[2]);	
+                	}
                     break;
 
                 case "nick":
