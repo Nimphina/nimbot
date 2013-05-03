@@ -1,5 +1,6 @@
 using Meebey.SmartIrc4net;
 using System;
+using System.Threading;
 using System.IO;
 using System.Collections.Generic;
 using System.Text;
@@ -94,7 +95,7 @@ namespace IRC
             {
                 Console.WriteLine("Some settings were incorrect in the config file, make sure the port is just numerals not letters i.e. 6667");
                 Console.ReadLine();
-                Environment.Exit(2);
+                Environment.Exit(0);
             }
             //Setting some eventhandlers
             irc.OnConnected += new EventHandler(OnConnected);
@@ -140,7 +141,7 @@ namespace IRC
                 while (reader.EndOfStream == false)
                 {
                     channel_list[i] = reader.ReadLine();
-                    i++
+                    i++;
                 }
 
 				Console.WriteLine("Joining {0}.", rootchannel);
@@ -162,6 +163,9 @@ namespace IRC
 				irc.RfcJoin(rootchannel);
 				Console.WriteLine("All channels joined successfully");
 			}
+            ThreadStart commandlinethread = new ThreadStart(commandline.cmd);
+            Thread t1 = new Thread(commandlinethread);
+            t1.Start();
 
             irc.Listen(true);
         }

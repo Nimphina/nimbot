@@ -38,6 +38,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="bcommands.cs" />
+    <Compile Include="commandline.cs" />
     <Compile Include="commands\bunny.cs" />
     <Compile Include="commands\opitems.cs" />
     <Compile Include="Main.cs" />
