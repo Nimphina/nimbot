@@ -2,21 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Meebey.SmartIrc4net;
 
 namespace IRC
 {
     class commandline
     {
-        public static void cmd()
+        public static void cmd(IrcClient irc)
         {
+			string channel = "#botspam";
             Console.WriteLine("Enter a message: ");
             string consolemessage = Console.ReadLine();
-
-            if (consolemessage == "/stop")
-            {
-                irc.SendMessage(SendType.Message, channel, string.Format("{0}, Messages from console disabled", botop), Priority.High);
-                break;
-            }
             irc.SendMessage(SendType.Message, channel, string.Format("{0}", consolemessage), Priority.High);
         }
     }

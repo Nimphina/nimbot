@@ -12,11 +12,11 @@ namespace IRC
         public static IrcClient irc = new IrcClient();
         public string server;
         public int port;
-        public string rootchannel;
-        public string botop;
-        public string botname;
-        public string version = "dev-1.0.22";
-        public string opsymbol = "#";
+        public static string rootchannel;
+        public static string botop;
+        public static string botname;
+        public static string version = "dev-1.0.23";
+        public static string opsymbol;
 
 
         public static void Main()
@@ -100,13 +100,17 @@ namespace IRC
             //Setting some eventhandlers
             irc.OnConnected += new EventHandler(OnConnected);
             irc.OnConnecting += new EventHandler(OnConnecting);
-            irc.OnPing += new PingEventHandler(OnPing);
+            //irc.OnPing += new PingEventHandler(OnPing);
             irc.OnDisconnected += new EventHandler(OnDisconnected);
             irc.OnChannelMessage += new IrcEventHandler(OnChannelMessage);
             irc.OnOp += new OpEventHandler(OnOp);
             irc.OnQueryMessage += new IrcEventHandler(OnQueryMessage);
             irc.OnBan += new BanEventHandler(OnBan);
             irc.OnTopicChange += new TopicChangeEventHandler(OnTopicChange);
+
+			ThreadStart commandlinethread = new ThreadStart(cmd);
+            Thread t1 = new Thread(commandlinethread);
+            t1.Start();
 
             try
             {
@@ -116,6 +120,7 @@ namespace IRC
             {
                 Console.Write("Failed to connect: " + e.Message);
                 Console.ReadKey();
+				t1.Abort();
             }
         }
 
@@ -163,10 +168,6 @@ namespace IRC
 				irc.RfcJoin(rootchannel);
 				Console.WriteLine("All channels joined successfully");
 			}
-            ThreadStart commandlinethread = new ThreadStart(commandline.cmd);
-            Thread t1 = new Thread(commandlinethread);
-            t1.Start();
-
             irc.Listen(true);
         }
 
@@ -219,12 +220,12 @@ namespace IRC
         {
             Console.WriteLine("Disconnected.");
         }
-
+		/*
         void OnPing(object sender, PingEventArgs e)
         {
             Console.WriteLine("Responded to ping at {0}.", DateTime.Now.ToShortTimeString());
         }
-        
+        */
         void OnOp(object sender, OpEventArgs e)
         {
             irc.SendMessage(SendType.Message, e.Channel, string.Format("Whoop!"), Priority.High);
@@ -254,6 +255,40 @@ namespace IRC
         {
             Console.WriteLine("{0} changed {1}, topic to {2}",e.Who, e.Channel, e.NewTopic);
 
+        }
+
+		public static void cmd ()
+		{
+			while (true) {
+				string consolemessage = Console.ReadLine ();
+				if (consolemessage.StartsWith ("/")) 
+				{
+					string[] args = consolemessage.TrimEnd ().Split (' ');
+					int lnth = args.Length;
+
+					string command_check = args[0].Trim (new Char[] {'/', });
+
+					switch (command_check) {
+
+					case "stop":
+					case "quit":
+						Environment.Exit (0);
+						break;
+
+					case "join":
+						irc.RfcJoin (args [1]);
+						break;
+					case "version":
+						Console.WriteLine(version);
+						break;
+					}
+				} 
+				else 
+				{
+					irc.SendMessage (SendType.Message, "#botspam", string.Format ("{0}", consolemessage), Priority.High);
+					Console.WriteLine ("[" + DateTime.Now.ToShortTimeString () + "]" + "(" + rootchannel + ") <" + botname + "> " + consolemessage);
+				}
+			}
         }
     }
 }

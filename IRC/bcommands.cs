@@ -75,7 +75,7 @@ namespace IRC
                     irc.SendMessage(SendType.Message, channel, string.Format("Bot server time is {0}", DateTime.Now.ToShortTimeString()), Priority.High);
                     break;
 		
-		case "q":
+				case "q":
                 case "quit":
                     if (nick == botop)
                     {
