@@ -15,7 +15,7 @@ namespace IRC
         public static string rootchannel;
         public static string botop;
         public static string botname;
-        public static string version = "dev-1.0.23";
+        public static string version = "dev-1.0.24";
         public static string opsymbol;
 
 
@@ -100,11 +100,12 @@ namespace IRC
             //Setting some eventhandlers
             irc.OnConnected += new EventHandler(OnConnected);
             irc.OnConnecting += new EventHandler(OnConnecting);
-            //irc.OnPing += new PingEventHandler(OnPing);
+            irc.OnPing += new PingEventHandler(OnPing);
             irc.OnDisconnected += new EventHandler(OnDisconnected);
             irc.OnChannelMessage += new IrcEventHandler(OnChannelMessage);
             irc.OnOp += new OpEventHandler(OnOp);
             irc.OnQueryMessage += new IrcEventHandler(OnQueryMessage);
+			irc.OnRawMessage += new IrcEventHandler(OnMessage);
             irc.OnBan += new BanEventHandler(OnBan);
             irc.OnTopicChange += new TopicChangeEventHandler(OnTopicChange);
 
@@ -182,6 +183,7 @@ namespace IRC
 			string channel = e.Data.Channel;
 			string message = e.Data.Message;
 			string nick = e.Data.Nick;
+
 			message = message.Trim(new Char[] { '!', '?','.', '\'', });
 
 			if (message.StartsWith (opsymbol)) {
@@ -220,12 +222,12 @@ namespace IRC
         {
             Console.WriteLine("Disconnected.");
         }
-		/*
+
         void OnPing(object sender, PingEventArgs e)
         {
-            Console.WriteLine("Responded to ping at {0}.", DateTime.Now.ToShortTimeString());
+            //Console.WriteLine("Responded to ping at {0}.", DateTime.Now.ToShortTimeString());
         }
-        */
+        
         void OnOp(object sender, OpEventArgs e)
         {
             irc.SendMessage(SendType.Message, e.Channel, string.Format("Whoop!"), Priority.High);
@@ -244,7 +246,18 @@ namespace IRC
                 bcommands.bc(botop, nick, nick, message, server, port, version, ref botname, irc);
             }
         }
-        
+
+        void OnMessage (object sender, IrcEventArgs e)
+		{
+			if (e.Data.Nick == "PING" || e.Data.Nick == " ") 
+			{
+			} 
+			else 
+			{
+				Console.WriteLine ("Message: -" + e.Data.Nick + "-: " + e.Data.Message);
+			}
+		}
+
         void OnBan(object sender, BanEventArgs e)
         {
             Console.WriteLine("Bot was banned from: {0}", e.Data.Channel);
@@ -259,6 +272,8 @@ namespace IRC
 
 		public static void cmd ()
 		{
+			string channel = rootchannel;
+
 			while (true) {
 				string consolemessage = Console.ReadLine ();
 				if (consolemessage.StartsWith ("/")) 
@@ -278,15 +293,26 @@ namespace IRC
 					case "join":
 						irc.RfcJoin (args [1]);
 						break;
+
 					case "version":
 						Console.WriteLine(version);
+						break;
+					
+					case "target":
+						channel = args[1];
+						break;
+
+					case "ident":
+						Console.WriteLine ("Enter your ident pass");
+						string pass = Console.ReadLine ();
+						irc.SendMessage(SendType.Message, "NickServ", string.Format("identify {0} {1}", botname, pass), Priority.High);
 						break;
 					}
 				} 
 				else 
 				{
-					irc.SendMessage (SendType.Message, "#botspam", string.Format ("{0}", consolemessage), Priority.High);
-					Console.WriteLine ("[" + DateTime.Now.ToShortTimeString () + "]" + "(" + rootchannel + ") <" + botname + "> " + consolemessage);
+					irc.SendMessage (SendType.Message, channel, string.Format ("{0}", consolemessage), Priority.High);
+					Console.WriteLine ("[" + DateTime.Now.ToShortTimeString () + "]" + "(" + channel + ") <" + botname + "> " + consolemessage);
 				}
 			}
         }

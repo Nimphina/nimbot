@@ -154,38 +154,6 @@ namespace IRC
                 case "kick":
                     opitems.kick(channel, botop, nick, args, lnth, irc);
                     break;
-
-				case "ident":
-					if (nick == botop)
-					{
-						Console.WriteLine ("Enter your ident pass");
-						string pass = Console.ReadLine ();
-						irc.SendMessage(SendType.Message, "NickServ", string.Format("identify Smush {0}", pass), Priority.High);
-					}
-					break;
-
-                case "condebug":
-                    if (nick == botop)
-                    {
-                        irc.SendMessage(SendType.Message, channel, string.Format("{0}, Messages from console enabled", botop), Priority.High);
-                        while (true)
-                        {
-                            Console.WriteLine("Enter a message: ");
-                            string consolemessage = Console.ReadLine();
-
-                            if (consolemessage == "/stop")
-                            {
-                                irc.SendMessage(SendType.Message, channel, string.Format("{0}, Messages from console disabled", botop), Priority.High);
-                                break;
-                            }
-                            irc.SendMessage(SendType.Message, channel, string.Format("{0}", consolemessage), Priority.High);
-                        }
-                    }
-                    else
-                    {
-                        irc.SendMessage(SendType.Message, channel, "You are not allowed to perform that command!", Priority.High);
-                    }
-                    break;
             }
         }
     }
