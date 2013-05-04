@@ -15,7 +15,7 @@ namespace IRC
         public static string rootchannel;
         public static string botop;
         public static string botname;
-        public static string version = "dev-1.0.24";
+        public static string version = "dev-1.0.25";
         public static string opsymbol;
 
 
@@ -249,7 +249,7 @@ namespace IRC
 
         void OnMessage (object sender, IrcEventArgs e)
 		{
-			if (e.Data.Nick == "PING" || e.Data.Nick == " ") 
+            if (e.Data.Nick == "PING" || string.IsNullOrEmpty(e.Data.Nick)) 
 			{
 			} 
 			else 
