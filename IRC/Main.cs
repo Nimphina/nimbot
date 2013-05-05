@@ -1,13 +1,13 @@
-using Meebey.SmartIrc4net;
 using System;
 using System.Threading;
 using System.IO;
 using System.Collections.Generic;
 using System.Text;
+using Meebey.SmartIrc4net;
 
 namespace IRC
 {
-    class ClientDemo
+    class Nimbot
     {
         public static IrcClient irc = new IrcClient();
         public string server;
@@ -15,17 +15,17 @@ namespace IRC
         public static string rootchannel;
         public static string botop;
         public static string botname;
-        public static string version = "dev-1.0.25";
+        public static string version = "dev-1.0.26";
         public static string opsymbol;
 
 
         public static void Main()
         {
-            Console.Title = "Nimbot terminal";
-            ClientDemo demo = new ClientDemo();
+            Console.Title = "Nimbot " + version;
+            Nimbot bot = new Nimbot();
         }
 
-        public ClientDemo()
+        public Nimbot()
         {
             try
             {
@@ -123,6 +123,7 @@ namespace IRC
                 Console.ReadKey();
 				t1.Abort();
             }
+			t1.Abort();
         }
 
         void OnConnecting(object sender, EventArgs e)
@@ -149,12 +150,20 @@ namespace IRC
                     channel_list[i] = reader.ReadLine();
                     i++;
                 }
-
+				i = 0;
 				Console.WriteLine("Joining {0}.", rootchannel);
                 foreach (string value in channel_list)
                 {
+					if (string.IsNullOrEmpty(channel_list[i]))
+					{
+						//Stops console spam
+					}
+					else
+					{
                     irc.RfcJoin(channel_list[i]);
 					Console.WriteLine("Joining {0}", channel_list[i]);
+						i++;
+					}
                 }
                 reader.Close();
             }
@@ -197,22 +206,22 @@ namespace IRC
 				Console.WriteLine ("RALPH SAID SHIT");
 			}
 
-			if (message == "What is love") 
+			else if (message == "What is love") 
 			{
 				irc.SendMessage (SendType.Message, channel, "Baby don't hurt me", Priority.High);
 			}
 
-			if (message == "Hodor") 
+			else if (message.ToLower() == "beep boop") 
 			{
-				irc.SendMessage (SendType.Message, channel, "Oh shut up", Priority.High);
+				irc.SendMessage (SendType.Message, channel, "imma robot", Priority.High);
 			}
 
-			if (message.ToLower() == "hello" || message.ToLower() == "hi") 
+			else if (message.ToLower() == "hello" || message.ToLower() == "hi") 
 			{
 				irc.SendMessage (SendType.Message, channel, string.Format ("Hello {0}", e.Data.Nick), Priority.High);
 			}
 
-			if (message.ToLower() == string.Format ("hello {0}, how are you", botname) || message.ToLower() == string.Format ("how are you doing {0}", botname)) 
+			else if (message.ToLower() == string.Format ("hello {0}, how are you", botname) || message.ToLower() == string.Format ("how are you doing {0}", botname)) 
 			{
 				irc.SendMessage (SendType.Message, channel, string.Format ("Hello {0}, I'm doing fine today, thanks", e.Data.Nick), Priority.High);
 			}
@@ -249,7 +258,7 @@ namespace IRC
 
         void OnMessage (object sender, IrcEventArgs e)
 		{
-            if (e.Data.Nick == "PING" || string.IsNullOrEmpty(e.Data.Nick)) 
+            if (e.Data.Nick == "PING" || string.IsNullOrEmpty(e.Data.Nick) || e.Data.Nick == botname) 
 			{
 			} 
 			else 
@@ -260,7 +269,7 @@ namespace IRC
 
         void OnBan(object sender, BanEventArgs e)
         {
-            Console.WriteLine("Bot was banned from: {0}", e.Data.Channel);
+			Console.WriteLine("{0} was banned from {1} by {2}.", botname, e.Data.Channel, e.Data.Nick);
             irc.RfcPart(e.Data.Channel);
         }
 
@@ -291,7 +300,32 @@ namespace IRC
 						break;
 
 					case "join":
+						if (lnth == 1)
+						{
+							Console.WriteLine("This command requires an argument!");
+						}
+						else
+						{
 						irc.RfcJoin (args [1]);
+						}
+						break;
+					
+					case "part":
+						if (lnth == 1)
+						{
+							Console.WriteLine("This command requires an argument!");
+						}
+
+						if (lnth == 2)
+						{
+						irc.RfcPart(args [1]);
+						}
+
+						else if (lnth >= 3)
+                		{
+                		irc.RfcPart(args[1] + args[2]);	
+                		}
+
 						break;
 
 					case "version":
@@ -299,7 +333,15 @@ namespace IRC
 						break;
 					
 					case "target":
+						if (lnth == 1)
+						{
+							Console.WriteLine("This command requires an argument!");
+							Console.Beep(40,10);
+						}
+						else
+						{
 						channel = args[1];
+						}
 						break;
 
 					case "ident":
@@ -307,12 +349,23 @@ namespace IRC
 						string pass = Console.ReadLine ();
 						irc.SendMessage(SendType.Message, "NickServ", string.Format("identify {0} {1}", botname, pass), Priority.High);
 						break;
+
+					default :
+						Console.WriteLine("Commands are, quit/stop, join, part, version and ident");
+						break;
 					}
 				} 
 				else 
 				{
+					if (string.IsNullOrEmpty(consolemessage))
+					{
+						Console.WriteLine("Message cannot be nothing!");
+					}
+					else
+					{
 					irc.SendMessage (SendType.Message, channel, string.Format ("{0}", consolemessage), Priority.High);
 					Console.WriteLine ("[" + DateTime.Now.ToShortTimeString () + "]" + "(" + channel + ") <" + botname + "> " + consolemessage);
+					}
 				}
 			}
         }

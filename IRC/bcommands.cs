@@ -113,7 +113,11 @@ namespace IRC
                     break;
 
                 case "part":
-                	if (lnth == 2)
+					if (lnth == 1)
+					{
+						irc.RfcPart(channel);
+					}
+                	else if (lnth == 2)
                 	{
                    		 irc.RfcPart(args[1]);
                 	}
