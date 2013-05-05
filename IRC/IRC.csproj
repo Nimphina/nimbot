@@ -48,6 +48,7 @@
     <Compile Include="commands\multiplication.cs" />
     <Compile Include="commands\u.cs" />
     <Compile Include="commands\reddit.cs" />
+    <Compile Include="startup.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

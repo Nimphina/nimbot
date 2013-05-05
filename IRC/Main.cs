@@ -15,13 +15,14 @@ namespace IRC
         public static string rootchannel;
         public static string botop;
         public static string botname;
-        public static string version = "dev-1.0.26";
+        public static string version = "dev-1.1.0";
         public static string opsymbol;
 
 
         public static void Main()
         {
             Console.Title = "Nimbot " + version;
+            startup.start(version);
             Nimbot bot = new Nimbot();
         }
 
@@ -119,24 +120,30 @@ namespace IRC
             }
             catch (Exception e)
             {
+                t1.Abort();
                 Console.Write("Failed to connect: " + e.Message);
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("      Error!");
+                Console.ResetColor();
+
                 Console.ReadKey();
-				t1.Abort();
             }
 			t1.Abort();
         }
 
         void OnConnecting(object sender, EventArgs e)
         {
-            Console.WriteLine("Nimbot version: {0} ", version);
-            Console.WriteLine("Botop: {0}, Command char: {1}", botop, opsymbol);
+            Console.WriteLine("Attempting to connect to {0} on {1}", server, port);
             Console.WriteLine(" ");
         }
 
         void OnConnected (object sender, EventArgs e)
 		{
-			Console.WriteLine ("Connected to {0} on port {1}.", server, port);
-
+			Console.Write ("Successfully connected to {0} on port {1}.", server, port);
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("      OK!");
+            Console.ResetColor();
+            
 			irc.Login (botname, botname, 0, string.Format ("{0}-bot", botname));
 
             try
@@ -145,13 +152,18 @@ namespace IRC
                 string[] channel_list = new string[10];
                 int i = 0;
 
+                Console.WriteLine("Joining rootchannel {0}.", rootchannel);
+                irc.RfcJoin(rootchannel);
+
+                //Reading the list of channels and joining them
                 while (reader.EndOfStream == false)
                 {
                     channel_list[i] = reader.ReadLine();
                     i++;
                 }
+
 				i = 0;
-				Console.WriteLine("Joining {0}.", rootchannel);
+
                 foreach (string value in channel_list)
                 {
 					if (string.IsNullOrEmpty(channel_list[i]))
@@ -160,8 +172,8 @@ namespace IRC
 					}
 					else
 					{
-                    irc.RfcJoin(channel_list[i]);
-					Console.WriteLine("Joining {0}", channel_list[i]);
+                        Console.WriteLine("Joining {0}", channel_list[i]);
+                        irc.RfcJoin(channel_list[i]);
 						i++;
 					}
                 }
@@ -171,12 +183,19 @@ namespace IRC
             {
                 StreamWriter writer = new StreamWriter("channel.list");
                 writer.Close();
-				Console.WriteLine("Joining {0}.", rootchannel);
             }
 			finally
 			{
-				irc.RfcJoin(rootchannel);
-				Console.WriteLine("All channels joined successfully");
+                Console.WriteLine("");
+				Console.Write("All channels joined successfully");
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("      OK!");
+                Console.ResetColor();
+
+                Console.WriteLine("");
+                Console.WriteLine("Server messages from here on out");
+                Console.WriteLine("");
+
 			}
             irc.Listen(true);
         }
