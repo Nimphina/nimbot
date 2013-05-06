@@ -11,7 +11,7 @@ namespace IRC
     class bcommands
     {
 
-        public static void bc(string botop, string channel, string nick, string message, string server, int port, string version, ref string botname, IrcClient irc)
+        public static void bc(string botop, string channel, string nick, string message, string server, int port, string version, ref string botname, double timestart, IrcClient irc)
         {
 
             string[] args = message.TrimEnd().Split(' ');
@@ -72,7 +72,28 @@ namespace IRC
                     break;
 
                 case "gettime":
-                    irc.SendMessage(SendType.Message, channel, string.Format("Bot server time is {0}", DateTime.Now.ToShortTimeString()), Priority.High);
+                    irc.SendMessage(SendType.Message, channel, string.Format("Bot server time is {0}", DateTime.Now.ToLongTimeString()), Priority.High);
+                    break;
+
+                case "uptime":
+                    string timenow_st = DateTime.Now.ToShortTimeString();
+                    timenow_st = timenow_st.Replace("PM", "");
+                    timenow_st = timenow_st.Replace("AM", "");
+                    timenow_st = timenow_st.Replace(":", "");
+                    double mins = double.Parse(timenow_st);
+                    mins = mins - timestart;
+               
+                    string hour;
+                    double hourdb = 0;
+                    while (mins >= 60)
+                    {
+                        mins -= 60;
+                        hourdb++;
+                    }
+                    hour = hourdb.ToString();
+
+                    string minutes = mins.ToString();
+                    irc.SendMessage(SendType.Message, channel, string.Format("{0} Hours {1} Minutes",hour, mins), Priority.High);
                     break;
 		
 				case "q":

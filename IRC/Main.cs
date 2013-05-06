@@ -15,8 +15,9 @@ namespace IRC
         public static string rootchannel;
         public static string botop;
         public static string botname;
-        public static string version = "dev-1.1.0";
+        public static string version = "dev-1.1.1";
         public static string opsymbol;
+        public static double timestart;
 
 
         public static void Main()
@@ -28,6 +29,19 @@ namespace IRC
 
         public Nimbot()
         {
+            try
+            {
+                string timestart_st = DateTime.Now.ToShortTimeString();
+                timestart_st = timestart_st.Replace("PM", " ");
+                timestart_st = timestart_st.Replace(":", "");
+                timestart = double.Parse(timestart_st);
+                
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                Console.ReadLine();
+            }
             try
             {
                 TextReader reader = new StreamReader("config.conf");
@@ -217,7 +231,7 @@ namespace IRC
 			if (message.StartsWith (opsymbol)) {
 				char opsymbolchar = Convert.ToChar (opsymbol);
 				message = message.Trim (new Char[] { opsymbolchar }); 
-				bcommands.bc (botop, channel, nick, message, server, port, version, ref botname, irc);
+				bcommands.bc (botop, channel, nick, message, server, port, version, ref botname, timestart, irc);
 			}
 
 			if (nick == "Ralph") {
@@ -271,7 +285,7 @@ namespace IRC
             {
                 char opsymbolchar = Convert.ToChar(opsymbol);
                 message = message.Trim(new Char[] { opsymbolchar });
-                bcommands.bc(botop, nick, nick, message, server, port, version, ref botname, irc);
+                bcommands.bc(botop, nick, nick, message, server, port, version, ref botname, timestart, irc);
             }
         }
 
@@ -387,6 +401,11 @@ namespace IRC
 					}
 				}
 			}
+        }
+
+        public static void uptime()
+        {
+            
         }
     }
 }
