@@ -15,7 +15,7 @@ namespace IRC
         public static string rootchannel;
         public static string botop;
         public static string botname;
-        public static string version = "dev-1.1.1";
+        public static string version = "dev-1.1.2";
         public static string opsymbol;
         public static double timestart;
 
@@ -32,10 +32,24 @@ namespace IRC
             try
             {
                 string timestart_st = DateTime.Now.ToShortTimeString();
-                timestart_st = timestart_st.Replace("PM", " ");
+                bool pmtrue = timestart_st.Contains("PM");
+
+                timestart_st = timestart_st.Replace("AM", "");
+                timestart_st = timestart_st.Replace("PM", "");
                 timestart_st = timestart_st.Replace(":", "");
                 timestart = double.Parse(timestart_st);
-                
+                if (pmtrue == true)
+                {
+                    timestart += 1200;
+                }
+                double timestart_mins = 0;
+                while (timestart >= 100)
+                {
+                    timestart -= 100;
+                    timestart_mins += 60;
+                }
+                timestart = timestart + timestart_mins;
+
             }
             catch (Exception e)
             {
@@ -166,6 +180,7 @@ namespace IRC
                 string[] channel_list = new string[10];
                 int i = 0;
 
+                Console.WriteLine("");
                 Console.WriteLine("Joining rootchannel {0}.", rootchannel);
                 irc.RfcJoin(rootchannel);
 
@@ -207,7 +222,7 @@ namespace IRC
                 Console.ResetColor();
 
                 Console.WriteLine("");
-                Console.WriteLine("Server messages from here on out");
+                Console.WriteLine("---------------------------------Server messages-------------------------------");
                 Console.WriteLine("");
 
 			}

@@ -77,23 +77,35 @@ namespace IRC
 
                 case "uptime":
                     string timenow_st = DateTime.Now.ToShortTimeString();
-                    timenow_st = timenow_st.Replace("PM", "");
-                    timenow_st = timenow_st.Replace("AM", "");
-                    timenow_st = timenow_st.Replace(":", "");
-                    double mins = double.Parse(timenow_st);
-                    mins = mins - timestart;
-               
-                    string hour;
-                    double hourdb = 0;
-                    while (mins >= 60)
-                    {
-                        mins -= 60;
-                        hourdb++;
-                    }
-                    hour = hourdb.ToString();
+                    bool pmtrue = timenow_st.Contains("PM");
 
-                    string minutes = mins.ToString();
-                    irc.SendMessage(SendType.Message, channel, string.Format("{0} Hours {1} Minutes",hour, mins), Priority.High);
+                    timenow_st = timenow_st.Replace("AM", "");
+                    timenow_st = timenow_st.Replace("PM", "");
+                    timenow_st = timenow_st.Replace(":", "");
+                    double timenow = double.Parse(timenow_st);
+
+                    if (pmtrue == true)
+                    {
+                        timenow += 1200;
+                    }
+
+                    double timenow_mins = 0;
+                    while (timenow >= 100)
+                    {
+                        timenow -= 100;
+                        timenow_mins += 60;
+                    }
+                    timenow = timenow + timenow_mins;
+
+                    double minutes = timenow - timestart;
+                    double hour = 0;
+                    while (minutes >= 60)
+                    {
+                        minutes -= 60;
+                        hour++;
+                    }
+
+                    irc.SendMessage(SendType.Message, channel, string.Format("{0} Hours {1} Minutes",hour, minutes), Priority.High);
                     break;
 		
 				case "q":
@@ -102,7 +114,7 @@ namespace IRC
                     {
                         Console.WriteLine("Quit command issed by {0}", nick);
                         irc.SendMessage(SendType.Message, channel, "Qwitting", Priority.High);
-                        irc.Disconnect();
+                        
                         Environment.Exit(0);
                     }
                     else
@@ -180,18 +192,18 @@ namespace IRC
                     opitems.kick(channel, botop, nick, args, lnth, irc);
                     break;
 
-//				case "restart": Broken :(
-//					if (nick == botop)
-//					{
-//						try{
-//						System.Diagnostics.Process.Start("Nimbot.sh");
-//						//System.Diagnostics.Process.Start("Nimbot.bat");
-//						Environment.Exit(0);
-//						}catch(Exception f){
-//						Console.WriteLine(f.Message);
-//						}
-//					}
-//				break;
+				case "restart": 
+					if (nick == botop)
+					{
+						try{
+						//System.Diagnostics.Process.Start("Nimbot.sh");
+						System.Diagnostics.Process.Start("Nimbot.bat");
+						Environment.Exit(0);
+						}catch(Exception f){
+						    Console.WriteLine(f.Message);
+						}
+					}
+				break;
             }
         }
     }
