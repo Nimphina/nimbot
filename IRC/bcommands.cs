@@ -179,6 +179,19 @@ namespace IRC
                 case "kick":
                     opitems.kick(channel, botop, nick, args, lnth, irc);
                     break;
+
+//				case "restart": Broken :(
+//					if (nick == botop)
+//					{
+//						try{
+//						System.Diagnostics.Process.Start("Nimbot.sh");
+//						//System.Diagnostics.Process.Start("Nimbot.bat");
+//						Environment.Exit(0);
+//						}catch(Exception f){
+//						Console.WriteLine(f.Message);
+//						}
+//					}
+//				break;
             }
         }
     }

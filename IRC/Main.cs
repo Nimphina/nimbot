@@ -402,10 +402,5 @@ namespace IRC
 				}
 			}
         }
-
-        public static void uptime()
-        {
-            
-        }
     }
 }
