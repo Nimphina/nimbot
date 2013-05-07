@@ -196,7 +196,7 @@ namespace IRC
 					if (nick == botop)
 					{
 						try{
-						//System.Diagnostics.Process.Start("Nimbot.sh");
+						System.Diagnostics.Process.Start("Nimbot.sh");
 						System.Diagnostics.Process.Start("Nimbot.bat");
 						Environment.Exit(0);
 						}catch(Exception f){
