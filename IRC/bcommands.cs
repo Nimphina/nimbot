@@ -68,7 +68,6 @@ namespace IRC
 
                 case "version":
                     irc.SendMessage(SendType.Message, channel, version, Priority.High);
-                    Console.WriteLine(version);
                     break;
 
                 case "gettime":

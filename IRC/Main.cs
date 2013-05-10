@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Threading;
 using System.IO;
 using System.Collections.Generic;
@@ -15,20 +15,20 @@ namespace IRC
         public static string rootchannel;
         public static string botop;
         public static string botname;
-        public static string version = "dev-1.1.2";
+        public static string version = "dev-1.1.3";
         public static string opsymbol;
         public static double timestart;
-
 
         public static void Main()
         {
             Console.Title = "Nimbot " + version;
-            startup.start(version);
+            startup.stage1(version);
             Nimbot bot = new Nimbot();
         }
 
         public Nimbot()
         {
+            // Get start time and covert it into minutes so it can be used to calculate uptime
             try
             {
                 string timestart_st = DateTime.Now.ToShortTimeString();
@@ -56,75 +56,43 @@ namespace IRC
                 Console.WriteLine(e.Message);
                 Console.ReadLine();
             }
-            try
+            bool restart = true;
+            while (restart == true)
             {
-                TextReader reader = new StreamReader("config.conf");
-                reader.ReadLine(); //skip server title, get server
-                server = reader.ReadLine();
-                
-                reader.ReadLine(); //get port
-                string portstring = reader.ReadLine(); 
-                port = int.Parse(portstring);
-                
-                reader.ReadLine(); //get root channel
-                rootchannel = reader.ReadLine();
-                
-                reader.ReadLine(); //get botname
-                botname = reader.ReadLine();
-                
-                reader.ReadLine(); //get botop
-                botop = reader.ReadLine();
-                
-                reader.ReadLine(); //get opsymbol
-                opsymbol = reader.ReadLine();
-                reader.Close();
-            }
-            catch (FileNotFoundException)
-            {
-                Console.WriteLine("Creating a blank config file");
+                try
+                {
+                    TextReader reader = new StreamReader("config.conf");
+                    reader.ReadLine(); //skip server title, get server
+                    server = reader.ReadLine();
 
-                StreamWriter writer = new StreamWriter("config.conf");
-                writer.WriteLine("Server:");
-                Console.WriteLine("What server are you connecting to?");
-                string writestring = Console.ReadLine();
-                writer.WriteLine(writestring);
+                    reader.ReadLine(); //get port
+                    string portstring = reader.ReadLine();
+                    port = int.Parse(portstring);
 
-                Console.WriteLine("What port are you connecting to?");
-                writestring = Console.ReadLine();
-                writer.WriteLine("Port:");
-                writer.WriteLine(writestring);
+                    reader.ReadLine(); //get root channel
+                    rootchannel = reader.ReadLine();
 
-                Console.WriteLine("What is the root channel?");
-                writestring = Console.ReadLine();
-                writer.WriteLine("Root channel:");
-                writer.WriteLine(writestring);
+                    reader.ReadLine(); //get botname
+                    botname = reader.ReadLine();
 
-                Console.WriteLine("What is the bot's nick?");
-                writestring = Console.ReadLine();
-                writer.WriteLine("Bot nick:");
-                writer.WriteLine(writestring);
+                    reader.ReadLine(); //get botop
+                    botop = reader.ReadLine();
 
-                Console.WriteLine("Who is the bot operator?");
-                writestring = Console.ReadLine();
-                writer.WriteLine("Botop:");
-                writer.WriteLine(writestring);
-
-                Console.WriteLine("What is the command char?");
-                writestring = Console.ReadLine();
-                writer.WriteLine("Command char:");
-                writer.WriteLine(writestring);
-
-                writer.Close();
-
-                Console.WriteLine("Now exiting, please restart nimbot");
-                Console.ReadLine();
-                Environment.Exit(0);
-            }
-            catch (FormatException)
-            {
-                Console.WriteLine("Some settings were incorrect in the config file, make sure the port is just numerals not letters i.e. 6667");
-                Console.ReadLine();
-                Environment.Exit(0);
+                    reader.ReadLine(); //get opsymbol
+                    opsymbol = reader.ReadLine();
+                    reader.Close();
+                    restart = false;
+                }
+                catch (FileNotFoundException)
+                {
+                    startup.stage2(); //Stuff for writing a new config file
+                }
+                catch (FormatException)
+                {
+                    Console.WriteLine("Some settings were incorrect in the config file, make sure the port is just numerals not letters i.e. 6667.");
+                    Console.ReadLine();
+                    Environment.Exit(0);
+                }
             }
             //Setting some eventhandlers
             irc.OnConnected += new EventHandler(OnConnected);
@@ -161,7 +129,7 @@ namespace IRC
 
         void OnConnecting(object sender, EventArgs e)
         {
-            Console.WriteLine("Attempting to connect to {0} on {1}", server, port);
+            Console.WriteLine("Attempting to connect to {0} on {1}.", server, port);
             Console.WriteLine(" ");
         }
 
@@ -201,7 +169,7 @@ namespace IRC
 					}
 					else
 					{
-                        Console.WriteLine("Joining {0}", channel_list[i]);
+                        Console.WriteLine("Joining {0}.", channel_list[i]);
                         irc.RfcJoin(channel_list[i]);
 						i++;
 					}
@@ -216,7 +184,7 @@ namespace IRC
 			finally
 			{
                 Console.WriteLine("");
-				Console.Write("All channels joined successfully");
+				Console.Write("All channels joined successfully.");
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("      OK!");
                 Console.ResetColor();
@@ -231,15 +199,14 @@ namespace IRC
 
         public void OnChannelMessage (object sender, IrcEventArgs e)
 		{
-			Console.WriteLine ("[" + DateTime.Now.ToShortTimeString () + "]" + "(" + e.Data.Channel + ") <" + e.Data.Nick + "> " + e.Data.Message);
+            string channel = e.Data.Channel;
+            string message = e.Data.Message;
+            string nick = e.Data.Nick;
+            string bn = botname.ToLower(); // So that the how are you thing would work
 
 			StreamWriter writer = new StreamWriter (e.Data.Channel + ".log", true);
-			writer.WriteLine ("[" + DateTime.Now.ToShortTimeString () + "]" + "(" + e.Data.Channel + ") <" + e.Data.Nick + "> " + e.Data.Message);
+			writer.WriteLine ("[{0}] ({1}) <{2}> {3}", DateTime.Now.ToShortTimeString(), channel, nick, message);
 			writer.Close ();
-
-			string channel = e.Data.Channel;
-			string message = e.Data.Message;
-			string nick = e.Data.Nick;
 
 			message = message.Trim(new Char[] { '!', '?','.', '\'', });
 
@@ -269,7 +236,7 @@ namespace IRC
 				irc.SendMessage (SendType.Message, channel, string.Format ("Hello {0}", e.Data.Nick), Priority.High);
 			}
 
-			else if (message.ToLower() == string.Format ("hello {0}, how are you", botname) || message.ToLower() == string.Format ("how are you doing {0}", botname)) 
+			else if (message.ToLower() == string.Format ("hello {0}, how are you", bn) || message.ToLower() == string.Format ("how are you doing {0}", bn)) 
 			{
 				irc.SendMessage (SendType.Message, channel, string.Format ("Hello {0}, I'm doing fine today, thanks", e.Data.Nick), Priority.High);
 			}
@@ -277,7 +244,8 @@ namespace IRC
 
         void OnDisconnected(object sender, EventArgs e)
         {
-            Console.WriteLine("Disconnected.");
+            Console.WriteLine("Disconnected from server.");
+            irc.Reconnect(true);
         }
 
         void OnPing(object sender, PingEventArgs e)
@@ -292,7 +260,7 @@ namespace IRC
 
         void OnQueryMessage(object sender, IrcEventArgs e)
         {
-            Console.WriteLine("Query: >" + e.Data.Nick +"<: " + e.Data.Message);
+            Console.WriteLine("[{0}] >{1}<: {2}", DateTime.Now.ToShortTimeString(), e.Data.Nick, e.Data.Message );
             string message = e.Data.Message;
             string nick = e.Data.Nick;
 
@@ -304,14 +272,28 @@ namespace IRC
             }
         }
 
-        void OnMessage (object sender, IrcEventArgs e)
+        public static void OnMessage (object sender, IrcEventArgs e)
 		{
-            if (e.Data.Nick == "PING" || string.IsNullOrEmpty(e.Data.Nick) || e.Data.Nick == botname) 
+            string channel = e.Data.Channel;
+            string nick = e.Data.Nick;
+            string message = e.Data.Message;
+
+            if (nick == "PING" || string.IsNullOrEmpty(nick) || nick == botname) 
 			{
 			} 
 			else 
 			{
-				Console.WriteLine ("Message: -" + e.Data.Nick + "-: " + e.Data.Message);
+                if (string.IsNullOrEmpty(channel))
+                {
+                    channel = "server";
+                }
+                if (message.Contains(botname))
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                }
+                Console.WriteLine("[{0}] ({1}) <{2}> {3}", DateTime.Now.ToShortTimeString(), channel, nick, message);
+
+                Console.ResetColor();
 			}
 		}
 
@@ -324,7 +306,6 @@ namespace IRC
         void OnTopicChange(object sender, TopicChangeEventArgs e)
         {
             Console.WriteLine("{0} changed {1}, topic to {2}",e.Who, e.Channel, e.NewTopic);
-
         }
 
 		public static void cmd ()
