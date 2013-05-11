@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.IO;
-using System.Linq;
 using System.Text;
 using Meebey.SmartIrc4net;
 
@@ -11,7 +10,7 @@ namespace IRC
     class bcommands
     {
 
-        public static void bc(string botop, string channel, string nick, string message, string server, int port, string version, ref string botname, double timestart, IrcClient irc)
+        public static void bc(string botop, string channel, string nick, string message, string server, int port, string version, ref string botname, int timestart, IrcClient irc)
         {
 
             string[] args = message.TrimEnd().Split(' ');
@@ -50,7 +49,8 @@ namespace IRC
                 case "divide":
                     division.divide(args, lnth, channel, nick, irc);
                     break;
-
+                
+                case "wafflebunny":
                 case "bunnywaffle":
                     bunny.waffle(channel, irc);
                     break;
@@ -75,29 +75,11 @@ namespace IRC
                     break;
 
                 case "uptime":
-                    string timenow_st = DateTime.Now.ToShortTimeString();
-                    bool pmtrue = timenow_st.Contains("PM");
 
-                    timenow_st = timenow_st.Replace("AM", "");
-                    timenow_st = timenow_st.Replace("PM", "");
-                    timenow_st = timenow_st.Replace(":", "");
-                    double timenow = double.Parse(timenow_st);
+                    int timenow = Nimbot.getmins();
 
-                    if (pmtrue == true)
-                    {
-                        timenow += 1200;
-                    }
-
-                    double timenow_mins = 0;
-                    while (timenow >= 100)
-                    {
-                        timenow -= 100;
-                        timenow_mins += 60;
-                    }
-                    timenow = timenow + timenow_mins;
-
-                    double minutes = timenow - timestart;
-                    double hour = 0;
+                    int minutes = timenow - timestart;
+                    int hour = 0;
                     while (minutes >= 60)
                     {
                         minutes -= 60;
@@ -195,7 +177,6 @@ namespace IRC
 					if (nick == botop)
 					{
 						try{
-						System.Diagnostics.Process.Start("Nimbot.sh");
 						System.Diagnostics.Process.Start("Nimbot.bat");
 						Environment.Exit(0);
 						}catch(Exception f){

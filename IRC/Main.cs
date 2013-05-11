@@ -15,85 +15,25 @@ namespace IRC
         public static string rootchannel;
         public static string botop;
         public static string botname;
-        public static string version = "dev-1.1.3";
+        public static string version = "dev-1.1.4";
         public static string opsymbol;
-        public static double timestart;
+        public static int timestart;
+        public static string logging;
 
         public static void Main()
         {
             Console.Title = "Nimbot " + version;
-            startup.stage1(version);
             Nimbot bot = new Nimbot();
         }
 
         public Nimbot()
         {
             // Get start time and covert it into minutes so it can be used to calculate uptime
-            try
-            {
-                string timestart_st = DateTime.Now.ToShortTimeString();
-                bool pmtrue = timestart_st.Contains("PM");
 
-                timestart_st = timestart_st.Replace("AM", "");
-                timestart_st = timestart_st.Replace("PM", "");
-                timestart_st = timestart_st.Replace(":", "");
-                timestart = double.Parse(timestart_st);
-                if (pmtrue == true)
-                {
-                    timestart += 1200;
-                }
-                double timestart_mins = 0;
-                while (timestart >= 100)
-                {
-                    timestart -= 100;
-                    timestart_mins += 60;
-                }
-                timestart = timestart + timestart_mins;
+            timestart = getmins();
+            startup.stage1(version);
+            startup.stage2(out server, out port, out rootchannel, out botname, out botop, out opsymbol, out logging);
 
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                Console.ReadLine();
-            }
-            bool restart = true;
-            while (restart == true)
-            {
-                try
-                {
-                    TextReader reader = new StreamReader("config.conf");
-                    reader.ReadLine(); //skip server title, get server
-                    server = reader.ReadLine();
-
-                    reader.ReadLine(); //get port
-                    string portstring = reader.ReadLine();
-                    port = int.Parse(portstring);
-
-                    reader.ReadLine(); //get root channel
-                    rootchannel = reader.ReadLine();
-
-                    reader.ReadLine(); //get botname
-                    botname = reader.ReadLine();
-
-                    reader.ReadLine(); //get botop
-                    botop = reader.ReadLine();
-
-                    reader.ReadLine(); //get opsymbol
-                    opsymbol = reader.ReadLine();
-                    reader.Close();
-                    restart = false;
-                }
-                catch (FileNotFoundException)
-                {
-                    startup.stage2(); //Stuff for writing a new config file
-                }
-                catch (FormatException)
-                {
-                    Console.WriteLine("Some settings were incorrect in the config file, make sure the port is just numerals not letters i.e. 6667.");
-                    Console.ReadLine();
-                    Environment.Exit(0);
-                }
-            }
             //Setting some eventhandlers
             irc.OnConnected += new EventHandler(OnConnected);
             irc.OnConnecting += new EventHandler(OnConnecting);
@@ -189,6 +129,15 @@ namespace IRC
                 Console.WriteLine("      OK!");
                 Console.ResetColor();
 
+                if (logging == "enabled")
+                {
+                    Console.WriteLine("");
+                    Console.Write("Channel logging is enabled.");
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine("      Warning!");
+                    Console.ResetColor();
+                }
+
                 Console.WriteLine("");
                 Console.WriteLine("---------------------------------Server messages-------------------------------");
                 Console.WriteLine("");
@@ -204,9 +153,12 @@ namespace IRC
             string nick = e.Data.Nick;
             string bn = botname.ToLower(); // So that the how are you thing would work
 
-			StreamWriter writer = new StreamWriter (e.Data.Channel + ".log", true);
-			writer.WriteLine ("[{0}] ({1}) <{2}> {3}", DateTime.Now.ToShortTimeString(), channel, nick, message);
-			writer.Close ();
+            if (logging == "enabled")
+            {
+                StreamWriter writer = new StreamWriter(e.Data.Channel + ".log", true);
+                writer.WriteLine("[{0}] ({1}) <{2}> {3}", DateTime.Now.ToShortTimeString(), channel, nick, message);
+                writer.Close();
+            }
 
 			message = message.Trim(new Char[] { '!', '?','.', '\'', });
 
@@ -245,7 +197,6 @@ namespace IRC
         void OnDisconnected(object sender, EventArgs e)
         {
             Console.WriteLine("Disconnected from server.");
-            irc.Reconnect(true);
         }
 
         void OnPing(object sender, PingEventArgs e)
@@ -397,6 +348,30 @@ namespace IRC
 					}
 				}
 			}
+        }
+
+        public static int getmins()
+        {
+            string rawtime = DateTime.Now.ToShortTimeString();
+            bool pmtrue = rawtime.Contains("PM");
+
+            rawtime = rawtime.Replace("AM", "");
+            rawtime = rawtime.Replace("PM", "");
+            rawtime = rawtime.Replace(":", "");
+            int time = int.Parse(rawtime);
+
+            if (pmtrue == true)
+            {
+                time += 1200;
+            }
+            int time_mins = 0;
+            while (time >= 100)
+            {
+                time -= 100;
+                time_mins += 60;
+            }
+            time = time + time_mins;
+            return time;
         }
     }
 }
