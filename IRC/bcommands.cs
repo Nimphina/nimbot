@@ -14,13 +14,14 @@ namespace IRC
         {
 
             string[] args = message.TrimEnd().Split(' ');
-            Console.WriteLine("Command char detected!");
+			Nimbot.console_messages("info", "INFO");
+            Console.WriteLine("Opsymbol detected!");
             int lnth = args.Length;
             string command_check = args[0];
 
             switch (command_check)
             {
-                case "U":
+            	case "U":
                 case "u":
                     u.umcf(args, lnth, channel, nick, irc);
                     break;
@@ -58,6 +59,7 @@ namespace IRC
                 //All hardcoded, non class commands
                 case "Ping":
                 case "ping":
+					Nimbot.console_messages("info", "INFO");
                     Console.WriteLine("ping command");
                     irc.SendMessage(SendType.Message, string.Format(channel, "#botspam"), "pong", Priority.High);
                     break;
@@ -93,6 +95,7 @@ namespace IRC
                 case "quit":
                     if (nick == botop)
                     {
+						Nimbot.console_messages("fail", "CRITICAL");
                         Console.WriteLine("Quit command issed by {0}", nick);
                         irc.SendMessage(SendType.Message, channel, "Qwitting", Priority.High);
                         
@@ -100,8 +103,10 @@ namespace IRC
                     }
                     else
                     {
+						Nimbot.console_messages("fail", "CRITICAL");
                         Console.WriteLine("Quit command issed by {0}", nick);
-                        irc.SendMessage(SendType.Message, channel, "You are not allowed to issue that command :C", Priority.High);
+                        irc.SendMessage(SendType.Message, channel, "You are not allowed to issue that command", Priority.High);
+						Nimbot.console_messages("fail", "CRITICAL");
                         Console.WriteLine("Unauthorized user using quit, suggesting immediate extermination");
                     }
                     break;
@@ -131,18 +136,22 @@ namespace IRC
                     }
                     break;
 
+				case "leave":
                 case "part":
 					if (lnth == 1)
 					{
 						irc.RfcPart(channel);
+						//part.channelremove(channel);
 					}
                 	else if (lnth == 2)
                 	{
                    		 irc.RfcPart(args[1]);
+						//part.channelremove(args[1]);
                 	}
                 	else if (lnth >= 3)
                 	{
                 		irc.RfcPart(args[1] + args[2]);	
+						//part.channelremove(args[1]);
                 	}
                     break;
 

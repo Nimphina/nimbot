@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
+using System.IO;
 using Meebey.SmartIrc4net;
 
 namespace IRC
@@ -24,6 +24,8 @@ namespace IRC
             else
             {
                 irc.SendMessage(SendType.Message, channel, "You are not authorised to perform that command", Priority.High);
+				Nimbot.console_messages("warning", "WARNING");
+				Console.WriteLine("An unauthorised user attempted to use a op command.");
             }
 
         }
@@ -43,6 +45,9 @@ namespace IRC
             else
             {
                 irc.SendMessage(SendType.Message, channel, "You are not authorised to perform that command", Priority.High);
+				Nimbot.console_messages("warning", "WARNING");
+				Console.WriteLine("An unauthorised user attempted to use a op command.");
+
             }
         }
         public static void voice(string channel, string botop, string nick, string[] args, int lnth, IrcClient irc)
@@ -61,6 +66,8 @@ namespace IRC
             else
             {
                 irc.SendMessage(SendType.Message, channel, "You are not authorised to perform that command", Priority.High);
+				Nimbot.console_messages("warning", "WARNING");
+				Console.WriteLine("An unauthorised user attempted to use a op command.");
             }
         }
         public static void devoice(string channel, string botop, string nick, string[] args, int lnth, IrcClient irc)
@@ -79,6 +86,8 @@ namespace IRC
             else
             {
                 irc.SendMessage(SendType.Message, channel, "You are not authorised to perform that command", Priority.High);
+				Nimbot.console_messages("warning", "WARNING");
+				Console.WriteLine("An unauthorised user attempted to use a op command.");
             }
         }
         public static void kick(string channel, string botop, string nick, string[] args, int lnth, IrcClient irc)
@@ -101,6 +110,8 @@ namespace IRC
             else
             {
                 irc.SendMessage(SendType.Message, channel, "You are not authorised to perform that command", Priority.High);
+				Nimbot.console_messages("warning", "WARNING");
+				Console.WriteLine("An unauthorised user attempted to use a op command.");
             }
         }
     }

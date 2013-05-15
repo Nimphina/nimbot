@@ -50,6 +50,7 @@
     <Compile Include="commands\u.cs" />
     <Compile Include="commands\reddit.cs" />
     <Compile Include="startup.cs" />
+    <Compile Include="commands\part.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

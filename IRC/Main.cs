@@ -15,7 +15,7 @@ namespace IRC
         public static string rootchannel;
         public static string botop;
         public static string botname;
-        public static string version = "dev-1.1.5";
+        public static string version = "dev-1.1.6";
         public static string opsymbol;
         public static int timestart;
         public static string logging;
@@ -106,7 +106,7 @@ namespace IRC
 					}
 					else
 					{
-                        console_messages("ongoing", "ONGOING");
+                        console_messages("info", "INFO");
                         Console.WriteLine("Joining {0}.", channel_list[i]);
                         irc.RfcJoin(channel_list[i]);
 						i++;
@@ -163,7 +163,7 @@ namespace IRC
 				bcommands.bc (botop, channel, nick, message, server, port, version, ref botname, timestart, irc);
 			}
 
-			if (nick == "Ralph") {
+			else if (nick == "Ralph") {
 				irc.SendMessage (SendType.Message, channel, "I hate Ralph and he hates me", Priority.High);
 				Console.WriteLine ("RALPH SAID SHIT");
 			}
@@ -191,6 +191,7 @@ namespace IRC
 
         void OnDisconnected(object sender, EventArgs e)
         {
+			console_messages("fail", "ERROR");
             Console.WriteLine("Disconnected from server.");
         }
 
@@ -233,7 +234,7 @@ namespace IRC
                 {
                     channel = "server";
                 }
-                try
+             /*   try
                 {
                     if (message.Contains(botname))
                     {
@@ -244,7 +245,10 @@ namespace IRC
                 {
                     Console.WriteLine(f.Message);
                 }
-                Console.WriteLine("[{0}] ({1}) <{2}> {3}", DateTime.Now.ToShortTimeString(), channel, nick, message);
+				* Seems to be causing exceptions for an unknown reason.
+                */
+				console_messages("message", "MESSAGE");
+                Console.WriteLine("({0}) <{1}> {2}", channel, nick, message);
 
                 Console.ResetColor();
 			}
@@ -252,12 +256,14 @@ namespace IRC
 
         void OnBan(object sender, BanEventArgs e)
         {
+			console_messages("warning", "WARNING");
 			Console.WriteLine("{0} was banned from {1} by {2}.", botname, e.Data.Channel, e.Data.Nick);
             irc.RfcPart(e.Data.Channel);
         }
 
         void OnTopicChange(object sender, TopicChangeEventArgs e)
         {
+			console_messages("info", "INFO");
             Console.WriteLine("{0} changed {1}, topic to {2}",e.Who, e.Channel, e.NewTopic);
         }
 
@@ -409,6 +415,14 @@ namespace IRC
                 Console.ResetColor();
                 Console.Write(" ]   ");
             }
+			else if (state.ToLower() == "message")
+			{
+				Console.Write("[ ");
+                Console.ForegroundColor = ConsoleColor.Magenta;
+                Console.Write(message);
+                Console.ResetColor();
+				Console.Write(" ] ");
+			}
         }
     }
 }
