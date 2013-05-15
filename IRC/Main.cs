@@ -15,7 +15,7 @@ namespace IRC
         public static string rootchannel;
         public static string botop;
         public static string botname;
-        public static string version = "dev-1.1.4";
+        public static string version = "dev-1.1.5";
         public static string opsymbol;
         public static int timestart;
         public static string logging;
@@ -57,10 +57,8 @@ namespace IRC
             catch (Exception e)
             {
                 t1.Abort();
+                console_messages("fail", "ERROR");
                 Console.Write("Failed to connect: " + e.Message);
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("      Error!");
-                Console.ResetColor();
 
                 Console.ReadKey();
             }
@@ -69,16 +67,14 @@ namespace IRC
 
         void OnConnecting(object sender, EventArgs e)
         {
+            console_messages("info", "INFO");
             Console.WriteLine("Attempting to connect to {0} on {1}.", server, port);
-            Console.WriteLine(" ");
         }
 
         void OnConnected (object sender, EventArgs e)
 		{
-			Console.Write ("Successfully connected to {0} on port {1}.", server, port);
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("      OK!");
-            Console.ResetColor();
+            console_messages("ok", "OK");
+			Console.WriteLine ("    Successfully connected to {0} on port {1}.", server, port);
             
 			irc.Login (botname, botname, 0, string.Format ("{0}-bot", botname));
 
@@ -88,7 +84,8 @@ namespace IRC
                 string[] channel_list = new string[10];
                 int i = 0;
 
-                Console.WriteLine("");
+
+                console_messages("info", "INFO");
                 Console.WriteLine("Joining rootchannel {0}.", rootchannel);
                 irc.RfcJoin(rootchannel);
 
@@ -109,6 +106,7 @@ namespace IRC
 					}
 					else
 					{
+                        console_messages("ongoing", "ONGOING");
                         Console.WriteLine("Joining {0}.", channel_list[i]);
                         irc.RfcJoin(channel_list[i]);
 						i++;
@@ -123,23 +121,20 @@ namespace IRC
             }
 			finally
 			{
-                Console.WriteLine("");
+
+                console_messages("ok", "OK");
 				Console.Write("All channels joined successfully.");
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("      OK!");
-                Console.ResetColor();
 
                 if (logging == "enabled")
                 {
                     Console.WriteLine("");
+                    console_messages("warning", "WARNING");
                     Console.Write("Channel logging is enabled.");
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine("      Warning!");
                     Console.ResetColor();
                 }
 
                 Console.WriteLine("");
-                Console.WriteLine("---------------------------------Server messages-------------------------------");
+                Console.WriteLine("----------------------------------Server messages--------------------------------");
                 Console.WriteLine("");
 
 			}
@@ -238,9 +233,16 @@ namespace IRC
                 {
                     channel = "server";
                 }
-                if (message.Contains(botname))
+                try
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
+                    if (message.Contains(botname))
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                    }
+                }
+                catch (Exception f)
+                {
+                    Console.WriteLine(f.Message);
                 }
                 Console.WriteLine("[{0}] ({1}) <{2}> {3}", DateTime.Now.ToShortTimeString(), channel, nick, message);
 
@@ -372,6 +374,41 @@ namespace IRC
             }
             time = time + time_mins;
             return time;
+        }
+        public static void console_messages(string state, string message)
+        {
+            if (state.ToLower() == "ok")
+            {
+                Console.Write("[ ");
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.Write(message);
+                Console.ResetColor();
+                Console.Write(" ]   ");
+            }
+            else if (state.ToLower() == "warning")
+            {
+                Console.Write("[ ");
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.Write(message);
+                Console.ResetColor();
+                Console.Write(" ]   ");
+            }
+            else if (state.ToLower() == "fail")
+            {
+                Console.Write("[ ");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.Write(message);
+                Console.ResetColor();
+                Console.Write(" ]   ");
+            }
+            else if (state.ToLower() == "info")
+            {
+                Console.Write("[ ");
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.Write(message);
+                Console.ResetColor();
+                Console.Write(" ]   ");
+            }
         }
     }
 }

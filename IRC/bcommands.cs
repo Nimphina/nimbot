@@ -113,16 +113,21 @@ namespace IRC
                     break;
 
                 case "join":
-                    if (args[1] != "#fofftopic")
+                    if (args[1].Contains("#"))
                     {
-                        irc.RfcJoin(args[1]);
-                        StreamWriter writer = new StreamWriter("channel.list", true);
-                        writer.WriteLine(args[1]);
-                        writer.Close();
+                        if (args[1] != "#fofftopic")
+                        {
+                            irc.RfcJoin(args[1]);
+                            join.channeladd(args[1], irc);
+                        }
+                        else
+                        {
+                            irc.SendMessage(SendType.Message, channel, "Joining #fofftopic is not allowed!", Priority.High);
+                        }
                     }
                     else
                     {
-                        irc.SendMessage(SendType.Message, channel, "Joining #fofftopic is not allowed!", Priority.High);
+                        irc.SendMessage(SendType.Message, channel, "Not a valid channel.", Priority.High);
                     }
                     break;
 
