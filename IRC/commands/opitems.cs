@@ -24,7 +24,7 @@ namespace IRC
             else
             {
                 irc.SendMessage(SendType.Message, channel, "You are not authorised to perform that command", Priority.High);
-				Nimbot.console_messages("warning", "WARNING");
+				Nimbot.msgcolours(IRC.Nimbot.msglevel.warning, "WARNING");
 				Console.WriteLine("An unauthorised user attempted to use a op command.");
             }
 
@@ -45,7 +45,7 @@ namespace IRC
             else
             {
                 irc.SendMessage(SendType.Message, channel, "You are not authorised to perform that command", Priority.High);
-				Nimbot.console_messages("warning", "WARNING");
+				Nimbot.msgcolours(IRC.Nimbot.msglevel.warning, "WARNING");
 				Console.WriteLine("An unauthorised user attempted to use a op command.");
 
             }
@@ -66,7 +66,7 @@ namespace IRC
             else
             {
                 irc.SendMessage(SendType.Message, channel, "You are not authorised to perform that command", Priority.High);
-				Nimbot.console_messages("warning", "WARNING");
+				Nimbot.msgcolours(IRC.Nimbot.msglevel.warning, "WARNING");
 				Console.WriteLine("An unauthorised user attempted to use a op command.");
             }
         }
@@ -86,7 +86,7 @@ namespace IRC
             else
             {
                 irc.SendMessage(SendType.Message, channel, "You are not authorised to perform that command", Priority.High);
-				Nimbot.console_messages("warning", "WARNING");
+				Nimbot.msgcolours(IRC.Nimbot.msglevel.warning, "WARNING");
 				Console.WriteLine("An unauthorised user attempted to use a op command.");
             }
         }
@@ -110,7 +110,7 @@ namespace IRC
             else
             {
                 irc.SendMessage(SendType.Message, channel, "You are not authorised to perform that command", Priority.High);
-				Nimbot.console_messages("warning", "WARNING");
+				Nimbot.msgcolours(IRC.Nimbot.msglevel.warning, "WARNING");
 				Console.WriteLine("An unauthorised user attempted to use a op command.");
             }
         }

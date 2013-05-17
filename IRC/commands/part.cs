@@ -22,7 +22,7 @@ namespace IRC
                 {
                     if (line.Contains(channel))
                     {
-						Nimbot.console_messages("info", "ATTENTION");
+						Nimbot.msgcolours(IRC.Nimbot.msglevel.info, "ATTENTION");
 						Console.WriteLine("Attempting to remove channel.");
 						writer.WriteLine("");
                     }

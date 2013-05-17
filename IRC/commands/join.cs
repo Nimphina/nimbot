@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Meebey.SmartIrc4net;
@@ -27,14 +27,14 @@ namespace IRC
             if (write == true)
             {
                 StreamWriter writer = new StreamWriter("channel.list", true);
-                Nimbot.console_messages("info", "INFO");
+                Nimbot.msgcolours(IRC.Nimbot.msglevel.info, "INFO");
                 Console.WriteLine("Adding {0} to channel list", channel);
                 writer.WriteLine(channel);
                 writer.Close();
             }
             else
             {
-                Nimbot.console_messages("info", "INFO");
+                Nimbot.msgcolours(IRC.Nimbot.msglevel.info, "INFO");
                 Console.WriteLine("{0} is already in the channel list", channel);
             }
         }

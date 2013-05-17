@@ -15,7 +15,7 @@ namespace IRC
         public static string rootchannel;
         public static string botop;
         public static string botname;
-        public static string version = "dev-1.1.6";
+        public static string version = "dev-1.1.7";
         public static string opsymbol;
         public static int timestart;
         public static string logging;
@@ -57,7 +57,7 @@ namespace IRC
             catch (Exception e)
             {
                 t1.Abort();
-                console_messages("fail", "ERROR");
+                msgcolours(msglevel.critcial, "ERROR");
                 Console.Write("Failed to connect: " + e.Message);
 
                 Console.ReadKey();
@@ -67,13 +67,13 @@ namespace IRC
 
         void OnConnecting(object sender, EventArgs e)
         {
-            console_messages("info", "INFO");
+            msgcolours(msglevel.info, "INFO");
             Console.WriteLine("Attempting to connect to {0} on {1}.", server, port);
         }
 
         void OnConnected (object sender, EventArgs e)
 		{
-            console_messages("ok", "OK");
+            msgcolours(msglevel.ok, "OK");
 			Console.WriteLine ("    Successfully connected to {0} on port {1}.", server, port);
             
 			irc.Login (botname, botname, 0, string.Format ("{0}-bot", botname));
@@ -85,7 +85,7 @@ namespace IRC
                 int i = 0;
 
 
-                console_messages("info", "INFO");
+                msgcolours(msglevel.info, "INFO");
                 Console.WriteLine("Joining rootchannel {0}.", rootchannel);
                 irc.RfcJoin(rootchannel);
 
@@ -106,7 +106,7 @@ namespace IRC
 					}
 					else
 					{
-                        console_messages("info", "INFO");
+                        msgcolours(msglevel.info, "INFO");
                         Console.WriteLine("Joining {0}.", channel_list[i]);
                         irc.RfcJoin(channel_list[i]);
 						i++;
@@ -122,13 +122,13 @@ namespace IRC
 			finally
 			{
 
-                console_messages("ok", "OK");
+                msgcolours(msglevel.ok, "OK");
 				Console.Write("All channels joined successfully.");
 
                 if (logging == "enabled")
                 {
                     Console.WriteLine("");
-                    console_messages("warning", "WARNING");
+                    msgcolours(msglevel.warning, "WARNING");
                     Console.Write("Channel logging is enabled.");
                     Console.ResetColor();
                 }
@@ -191,7 +191,7 @@ namespace IRC
 
         void OnDisconnected(object sender, EventArgs e)
         {
-			console_messages("fail", "ERROR");
+			msgcolours(msglevel.critcial, "ERROR");
             Console.WriteLine("Disconnected from server.");
         }
 
@@ -247,7 +247,7 @@ namespace IRC
                 }
 				* Seems to be causing exceptions for an unknown reason.
                 */
-				console_messages("message", "MESSAGE");
+				msgcolours(msglevel.message, "MESSAGE");
                 Console.WriteLine("({0}) <{1}> {2}", channel, nick, message);
 
                 Console.ResetColor();
@@ -256,14 +256,14 @@ namespace IRC
 
         void OnBan(object sender, BanEventArgs e)
         {
-			console_messages("warning", "WARNING");
+			msgcolours(msglevel.warning, "WARNING");
 			Console.WriteLine("{0} was banned from {1} by {2}.", botname, e.Data.Channel, e.Data.Nick);
             irc.RfcPart(e.Data.Channel);
         }
 
         void OnTopicChange(object sender, TopicChangeEventArgs e)
         {
-			console_messages("info", "INFO");
+			msgcolours(msglevel.info, "INFO");
             Console.WriteLine("{0} changed {1}, topic to {2}",e.Who, e.Channel, e.NewTopic);
         }
 
@@ -290,6 +290,7 @@ namespace IRC
 					case "join":
 						if (lnth == 1)
 						{
+							msgcolours(msglevel.critcial, "ERROR");
 							Console.WriteLine("This command requires an argument!");
 						}
 						else
@@ -301,6 +302,7 @@ namespace IRC
 					case "part":
 						if (lnth == 1)
 						{
+							msgcolours(msglevel.critcial, "ERROR");
 							Console.WriteLine("This command requires an argument!");
 						}
 
@@ -323,22 +325,24 @@ namespace IRC
 					case "target":
 						if (lnth == 1)
 						{
-							Console.WriteLine("This command requires an argument!");
-							Console.Beep(40,10);
+							msgcolours(msglevel.critcial, "ERROR");
+							Console.WriteLine("This command requires an argument!");;
 						}
 						else
 						{
-						channel = args[1];
+							channel = args[1];
 						}
 						break;
 
 					case "ident":
-						Console.WriteLine ("Enter your ident pass");
+						msgcolours(msglevel.info, "INFO");
+						Console.Write ("Enter your ident pass:");
 						string pass = Console.ReadLine ();
 						irc.SendMessage(SendType.Message, "NickServ", string.Format("identify {0} {1}", botname, pass), Priority.High);
 						break;
 
 					default :
+						msgcolours(msglevel.info, "INFO");
 						Console.WriteLine("Commands are, quit/stop, join, part, version and ident");
 						break;
 					}
@@ -347,12 +351,14 @@ namespace IRC
 				{
 					if (string.IsNullOrEmpty(consolemessage))
 					{
+						msgcolours(msglevel.critcial, "ERROR");
 						Console.WriteLine("Message cannot be nothing!");
 					}
 					else
 					{
-					irc.SendMessage (SendType.Message, channel, string.Format ("{0}", consolemessage), Priority.High);
-					Console.WriteLine ("[" + DateTime.Now.ToShortTimeString () + "]" + "(" + channel + ") <" + botname + "> " + consolemessage);
+						irc.SendMessage (SendType.Message, channel, string.Format ("{0}", consolemessage), Priority.High);
+						msgcolours(msglevel.message, "MESSAGE");
+						Console.WriteLine ("[" + DateTime.Now.ToShortTimeString () + "]" + "(" + channel + ") <" + botname + "> " + consolemessage);
 					}
 				}
 			}
@@ -381,9 +387,17 @@ namespace IRC
             time = time + time_mins;
             return time;
         }
-        public static void console_messages(string state, string message)
+		public enum msglevel 
+		{
+			ok,
+			warning,
+			critcial,
+			info,
+			message
+		}
+        public static void msgcolours(msglevel state, string message)
         {
-            if (state.ToLower() == "ok")
+            if (state == msglevel.ok)
             {
                 Console.Write("[ ");
                 Console.ForegroundColor = ConsoleColor.Green;
@@ -391,7 +405,7 @@ namespace IRC
                 Console.ResetColor();
                 Console.Write(" ]   ");
             }
-            else if (state.ToLower() == "warning")
+            else if (state == msglevel.warning)
             {
                 Console.Write("[ ");
                 Console.ForegroundColor = ConsoleColor.Yellow;
@@ -399,7 +413,7 @@ namespace IRC
                 Console.ResetColor();
                 Console.Write(" ]   ");
             }
-            else if (state.ToLower() == "fail")
+            else if (state == msglevel.critcial)
             {
                 Console.Write("[ ");
                 Console.ForegroundColor = ConsoleColor.Red;
@@ -407,7 +421,7 @@ namespace IRC
                 Console.ResetColor();
                 Console.Write(" ]   ");
             }
-            else if (state.ToLower() == "info")
+            else if (state == msglevel.info)
             {
                 Console.Write("[ ");
                 Console.ForegroundColor = ConsoleColor.Blue;
@@ -415,7 +429,7 @@ namespace IRC
                 Console.ResetColor();
                 Console.Write(" ]   ");
             }
-			else if (state.ToLower() == "message")
+			else if (state == msglevel.message)
 			{
 				Console.Write("[ ");
                 Console.ForegroundColor = ConsoleColor.Magenta;

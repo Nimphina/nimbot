@@ -14,7 +14,7 @@ namespace IRC
         {
 
             string[] args = message.TrimEnd().Split(' ');
-			Nimbot.console_messages("info", "INFO");
+			Nimbot.msgcolours(IRC.Nimbot.msglevel.info, "INFO");
             Console.WriteLine("Opsymbol detected!");
             int lnth = args.Length;
             string command_check = args[0];
@@ -59,7 +59,7 @@ namespace IRC
                 //All hardcoded, non class commands
                 case "Ping":
                 case "ping":
-					Nimbot.console_messages("info", "INFO");
+					Nimbot.msgcolours(IRC.Nimbot.msglevel.info, "INFO");
                     Console.WriteLine("ping command");
                     irc.SendMessage(SendType.Message, string.Format(channel, "#botspam"), "pong", Priority.High);
                     break;
@@ -69,7 +69,7 @@ namespace IRC
                     break;
 
                 case "version":
-                    irc.SendMessage(SendType.Message, channel, version, Priority.High);
+                    irc.SendMessage(SendType.Message, channel, "Nimbot" + version, Priority.High);
                     break;
 
                 case "gettime":
@@ -82,20 +82,28 @@ namespace IRC
 
                     int minutes = timenow - timestart;
                     int hour = 0;
+					string hrst = "Hours"; string minst = "Minutes";
                     while (minutes >= 60)
                     {
                         minutes -= 60;
                         hour++;
                     }
-
-                    irc.SendMessage(SendType.Message, channel, string.Format("{0} Hours {1} Minutes",hour, minutes), Priority.High);
+					if (hour <= 1)
+					{
+						hrst = "Hour";
+					}
+					if (minutes <= 1)
+					{
+						minst = "Minute";
+					}
+					irc.SendMessage(SendType.Message, channel, string.Format("{0} {1} {2} {3}",hour, hrst, minutes, minst), Priority.High);
                     break;
 		
 				case "q":
                 case "quit":
                     if (nick == botop)
                     {
-						Nimbot.console_messages("fail", "CRITICAL");
+						Nimbot.msgcolours(IRC.Nimbot.msglevel.critcial, "CRITICAL");
                         Console.WriteLine("Quit command issed by {0}", nick);
                         irc.SendMessage(SendType.Message, channel, "Qwitting", Priority.High);
                         
@@ -103,10 +111,10 @@ namespace IRC
                     }
                     else
                     {
-						Nimbot.console_messages("fail", "CRITICAL");
+						Nimbot.msgcolours(IRC.Nimbot.msglevel.critcial, "CRITICAL");
                         Console.WriteLine("Quit command issed by {0}", nick);
                         irc.SendMessage(SendType.Message, channel, "You are not allowed to issue that command", Priority.High);
-						Nimbot.console_messages("fail", "CRITICAL");
+						Nimbot.msgcolours(IRC.Nimbot.msglevel.critcial, "CRITICAL");
                         Console.WriteLine("Unauthorized user using quit, suggesting immediate extermination");
                     }
                     break;
@@ -190,10 +198,13 @@ namespace IRC
 				case "restart": 
 					if (nick == botop)
 					{
-						try{
+						try
+						{
 						System.Diagnostics.Process.Start("Nimbot.bat");
 						Environment.Exit(0);
-						}catch(Exception f){
+						}
+						catch(Exception f)
+						{
 						    Console.WriteLine(f.Message);
 						}
 					}
