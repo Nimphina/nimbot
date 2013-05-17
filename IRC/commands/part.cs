@@ -6,29 +6,34 @@ using System.IO;
 
 namespace IRC
 {
-	public class part
-	{
-		public static void channelremove (string channel)
-		{
-			StringBuilder sb = new StringBuilder();
-			StreamWriter writer = new StreamWriter("channel.list", true);
+    public class part
+    {
+        public static void channelremove(string channel)
+        {
 
-            string line;
-            bool remove = true;
-              
-            using (System.IO.StreamReader file = new System.IO.StreamReader("channel.list"))
+            System.IO.File.Copy("channel.list", "channel.tmp", true);
+            StreamWriter writer = new StreamWriter("channel.list");
+            StreamReader reader = new StreamReader("channel.tmp");
+            string readchan;
+            while (reader.EndOfStream == false)
             {
-                while ((line = file.ReadLine()) != null)
+                readchan = reader.ReadLine();
+                readchan = readchan.TrimEnd(' ');
+                if (readchan == channel)
                 {
-                    if (line.Contains(channel))
-                    {
-						Nimbot.msgcolours(IRC.Nimbot.msglevel.info, "ATTENTION");
-						Console.WriteLine("Attempting to remove channel.");
-						writer.WriteLine("");
-                    }
+                    //write nothing \o/
+                    IRC.Nimbot.msgcolours(Nimbot.msglevel.info, "INFO");
+                    Console.WriteLine("Removing {0} from channel list", channel);
+                }
+                else
+                {
+                    writer.WriteLine(readchan);
                 }
             }
-		}
-	}
+            writer.Close();
+            reader.Close();
+            System.IO.File.Delete("channel.tmp");
+        }
+    }
 }
 

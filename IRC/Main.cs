@@ -15,7 +15,7 @@ namespace IRC
         public static string rootchannel;
         public static string botop;
         public static string botname;
-        public static string version = "dev-1.1.7";
+        public static string version = "dev-1.1.8";
         public static string opsymbol;
         public static int timestart;
         public static string logging;
@@ -33,6 +33,14 @@ namespace IRC
             timestart = getmins();
             startup.stage1(version);
             startup.stage2(out server, out port, out rootchannel, out botname, out botop, out opsymbol, out logging);
+           
+            irc.Encoding = System.Text.Encoding.UTF8;
+            irc.ActiveChannelSyncing = true;
+            irc.AutoReconnect = true;
+            irc.AutoRetry = true;
+            irc.AutoRelogin = true;
+            irc.AutoJoinOnInvite = true;
+            irc.SendDelay = 300;
 
             //Setting some eventhandlers
             irc.OnConnected += new EventHandler(OnConnected);
@@ -42,11 +50,11 @@ namespace IRC
             irc.OnChannelMessage += new IrcEventHandler(OnChannelMessage);
             irc.OnOp += new OpEventHandler(OnOp);
             irc.OnQueryMessage += new IrcEventHandler(OnQueryMessage);
-			irc.OnRawMessage += new IrcEventHandler(OnMessage);
+            irc.OnRawMessage += new IrcEventHandler(OnMessage);
             irc.OnBan += new BanEventHandler(OnBan);
             irc.OnTopicChange += new TopicChangeEventHandler(OnTopicChange);
 
-			ThreadStart commandlinethread = new ThreadStart(cmd);
+            ThreadStart commandlinethread = new ThreadStart(cmd);
             Thread t1 = new Thread(commandlinethread);
             t1.Start();
 
@@ -62,7 +70,7 @@ namespace IRC
 
                 Console.ReadKey();
             }
-			t1.Abort();
+            t1.Abort();
         }
 
         void OnConnecting(object sender, EventArgs e)
@@ -71,59 +79,63 @@ namespace IRC
             Console.WriteLine("Attempting to connect to {0} on {1}.", server, port);
         }
 
-        void OnConnected (object sender, EventArgs e)
-		{
+        void OnConnected(object sender, EventArgs e)
+        {
             msgcolours(msglevel.ok, "OK");
-			Console.WriteLine ("    Successfully connected to {0} on port {1}.", server, port);
-            
-			irc.Login (botname, botname, 0, string.Format ("{0}-bot", botname));
+            Console.WriteLine("Successfully connected to {0} on port {1}.", server, port);
+
+            irc.Login(botname, botname, 0, string.Format("{0}-bot", botname));
 
             try
             {
-                StreamReader reader = new StreamReader("channel.list");
-                string[] channel_list = new string[10];
-                int i = 0;
+                StreamReader chanlistcheck = new StreamReader("channel.list");
 
+                int chanarraylnth = 0;
+                while (chanlistcheck.EndOfStream == false)
+                {
+                    chanlistcheck.ReadLine();
+                    chanarraylnth++;
+                }
+                chanlistcheck.Close();
+                string[] channel_list = new string[chanarraylnth];
+
+                StreamReader chanreader = new StreamReader("channel.list");
+
+                int i = 0;
 
                 msgcolours(msglevel.info, "INFO");
                 Console.WriteLine("Joining rootchannel {0}.", rootchannel);
                 irc.RfcJoin(rootchannel);
 
                 //Reading the list of channels and joining them
-                while (reader.EndOfStream == false)
+                while (chanreader.EndOfStream == false)
                 {
-                    channel_list[i] = reader.ReadLine();
+                    channel_list[i] = chanreader.ReadLine();
                     i++;
                 }
 
-				i = 0;
+                i = 0;
 
                 foreach (string value in channel_list)
                 {
-					if (string.IsNullOrEmpty(channel_list[i]))
-					{
-						//Stops console spam
-					}
-					else
-					{
-                        msgcolours(msglevel.info, "INFO");
-                        Console.WriteLine("Joining {0}.", channel_list[i]);
-                        irc.RfcJoin(channel_list[i]);
-						i++;
-					}
+
+                    msgcolours(msglevel.info, "INFO");
+                    Console.WriteLine("Joining {0}.", channel_list[i]);
+                    irc.RfcJoin(channel_list[i]);
+                    i++;
                 }
-                reader.Close();
+                chanreader.Close();
             }
             catch (FileNotFoundException)
             {
                 StreamWriter writer = new StreamWriter("channel.list");
                 writer.Close();
             }
-			finally
-			{
+            finally
+            {
 
                 msgcolours(msglevel.ok, "OK");
-				Console.Write("All channels joined successfully.");
+                Console.Write("All channels joined successfully.");
 
                 if (logging == "enabled")
                 {
@@ -137,12 +149,12 @@ namespace IRC
                 Console.WriteLine("----------------------------------Server messages--------------------------------");
                 Console.WriteLine("");
 
-			}
+            }
             irc.Listen(true);
         }
 
-        public void OnChannelMessage (object sender, IrcEventArgs e)
-		{
+        public void OnChannelMessage(object sender, IrcEventArgs e)
+        {
             string channel = e.Data.Channel;
             string message = e.Data.Message;
             string nick = e.Data.Nick;
@@ -155,43 +167,45 @@ namespace IRC
                 writer.Close();
             }
 
-			message = message.Trim(new Char[] { '!', '?','.', '\'', });
+            message = message.Trim(new Char[] { '!', '?', '.', '\'', });
 
-			if (message.StartsWith (opsymbol)) {
-				char opsymbolchar = Convert.ToChar (opsymbol);
-				message = message.Trim (new Char[] { opsymbolchar }); 
-				bcommands.bc (botop, channel, nick, message, server, port, version, ref botname, timestart, irc);
-			}
+            if (message.StartsWith(opsymbol))
+            {
+                char opsymbolchar = Convert.ToChar(opsymbol);
+                message = message.Trim(new Char[] { opsymbolchar });
+                bcommands.bc(botop, channel, nick, message, server, port, version, ref botname, timestart, irc);
+            }
 
-			else if (nick == "Ralph") {
-				irc.SendMessage (SendType.Message, channel, "I hate Ralph and he hates me", Priority.High);
-				Console.WriteLine ("RALPH SAID SHIT");
-			}
+            else if (nick == "Ralph")
+            {
+                irc.SendMessage(SendType.Message, channel, "I hate Ralph and he hates me", Priority.High);
+                Console.WriteLine("RALPH SAID SHIT");
+            }
 
-			else if (message == "What is love") 
-			{
-				irc.SendMessage (SendType.Message, channel, "Baby don't hurt me", Priority.High);
-			}
+            else if (message == "What is love")
+            {
+                irc.SendMessage(SendType.Message, channel, "Baby don't hurt me", Priority.High);
+            }
 
-			else if (message.ToLower() == "beep boop") 
-			{
-				irc.SendMessage (SendType.Message, channel, "imma robot", Priority.High);
-			}
+            else if (message.ToLower() == "beep boop")
+            {
+                irc.SendMessage(SendType.Message, channel, "imma robot", Priority.High);
+            }
 
-			else if (message.ToLower() == "hello" || message.ToLower() == "hi") 
-			{
-				irc.SendMessage (SendType.Message, channel, string.Format ("Hello {0}", e.Data.Nick), Priority.High);
-			}
+            else if (message.ToLower() == "hello" || message.ToLower() == "hi")
+            {
+                irc.SendMessage(SendType.Message, channel, string.Format("Hello {0}", e.Data.Nick), Priority.High);
+            }
 
-			else if (message.ToLower() == string.Format ("hello {0}, how are you", bn) || message.ToLower() == string.Format ("how are you doing {0}", bn)) 
-			{
-				irc.SendMessage (SendType.Message, channel, string.Format ("Hello {0}, I'm doing fine today, thanks", e.Data.Nick), Priority.High);
-			}
+            else if (message.ToLower() == string.Format("hello {0}, how are you", bn) || message.ToLower() == string.Format("how are you doing {0}", bn))
+            {
+                irc.SendMessage(SendType.Message, channel, string.Format("Hello {0}, I'm doing fine today, thanks", e.Data.Nick), Priority.High);
+            }
         }
 
         void OnDisconnected(object sender, EventArgs e)
         {
-			msgcolours(msglevel.critcial, "ERROR");
+            msgcolours(msglevel.critcial, "ERROR");
             Console.WriteLine("Disconnected from server.");
         }
 
@@ -199,7 +213,7 @@ namespace IRC
         {
             //Console.WriteLine("Responded to ping at {0}.", DateTime.Now.ToShortTimeString());
         }
-        
+
         void OnOp(object sender, OpEventArgs e)
         {
             irc.SendMessage(SendType.Message, e.Channel, string.Format("Whoop!"), Priority.High);
@@ -207,7 +221,7 @@ namespace IRC
 
         void OnQueryMessage(object sender, IrcEventArgs e)
         {
-            Console.WriteLine("[{0}] >{1}<: {2}", DateTime.Now.ToShortTimeString(), e.Data.Nick, e.Data.Message );
+            Console.WriteLine("[{0}] >{1}<: {2}", DateTime.Now.ToShortTimeString(), e.Data.Nick, e.Data.Message);
             string message = e.Data.Message;
             string nick = e.Data.Nick;
 
@@ -219,149 +233,151 @@ namespace IRC
             }
         }
 
-        public static void OnMessage (object sender, IrcEventArgs e)
-		{
+        public static void OnMessage(object sender, IrcEventArgs e)
+        {
             string channel = e.Data.Channel;
             string nick = e.Data.Nick;
             string message = e.Data.Message;
 
-            if (nick == "PING" || string.IsNullOrEmpty(nick) || nick == botname) 
-			{
-			} 
-			else 
-			{
+            if (nick == "PING" || string.IsNullOrEmpty(nick) || nick == botname)
+            {
+            }
+            else
+            {
                 if (string.IsNullOrEmpty(channel))
                 {
                     channel = "server";
                 }
-             /*   try
-                {
-                    if (message.Contains(botname))
-                    {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                    }
-                }
-                catch (Exception f)
-                {
-                    Console.WriteLine(f.Message);
-                }
-				* Seems to be causing exceptions for an unknown reason.
-                */
-				msgcolours(msglevel.message, "MESSAGE");
+                /*   try
+                   {
+                       if (message.Contains(botname))
+                       {
+                           Console.ForegroundColor = ConsoleColor.Red;
+                       }
+                   }
+                   catch (Exception f)
+                   {
+                       Console.WriteLine(f.Message);
+                   }
+                   * Seems to be causing exceptions for an unknown reason.
+                   */
+                msgcolours(msglevel.message, "MESSAGE");
                 Console.WriteLine("({0}) <{1}> {2}", channel, nick, message);
 
                 Console.ResetColor();
-			}
-		}
+            }
+        }
 
         void OnBan(object sender, BanEventArgs e)
         {
-			msgcolours(msglevel.warning, "WARNING");
-			Console.WriteLine("{0} was banned from {1} by {2}.", botname, e.Data.Channel, e.Data.Nick);
+            msgcolours(msglevel.warning, "WARNING");
+            Console.WriteLine("{0} was banned from {1} by {2}.", botname, e.Data.Channel, e.Data.Nick);
             irc.RfcPart(e.Data.Channel);
         }
 
         void OnTopicChange(object sender, TopicChangeEventArgs e)
         {
-			msgcolours(msglevel.info, "INFO");
-            Console.WriteLine("{0} changed {1}, topic to {2}",e.Who, e.Channel, e.NewTopic);
+            msgcolours(msglevel.info, "INFO");
+            Console.WriteLine("{0} changed {1}, topic to {2}", e.Who, e.Channel, e.NewTopic);
         }
 
-		public static void cmd ()
-		{
-			string channel = rootchannel;
+        public static void cmd()
+        {
+            string channel = rootchannel;
 
-			while (true) {
-				string consolemessage = Console.ReadLine ();
-				if (consolemessage.StartsWith ("/")) 
-				{
-					string[] args = consolemessage.TrimEnd ().Split (' ');
-					int lnth = args.Length;
+            while (true)
+            {
+                string consolemessage = Console.ReadLine();
+                if (consolemessage.StartsWith("/"))
+                {
+                    string[] args = consolemessage.TrimEnd().Split(' ');
+                    int lnth = args.Length;
 
-					string command_check = args[0].Trim (new Char[] {'/', });
+                    string command_check = args[0].Trim(new Char[] { '/', });
 
-					switch (command_check) {
+                    switch (command_check)
+                    {
 
-					case "stop":
-					case "quit":
-						Environment.Exit (0);
-						break;
+                        case "stop":
+                        case "quit":
+                            Environment.Exit(0);
+                            break;
 
-					case "join":
-						if (lnth == 1)
-						{
-							msgcolours(msglevel.critcial, "ERROR");
-							Console.WriteLine("This command requires an argument!");
-						}
-						else
-						{
-						irc.RfcJoin (args [1]);
-						}
-						break;
-					
-					case "part":
-						if (lnth == 1)
-						{
-							msgcolours(msglevel.critcial, "ERROR");
-							Console.WriteLine("This command requires an argument!");
-						}
+                        case "join":
+                            if (lnth == 1)
+                            {
+                                msgcolours(msglevel.critcial, "ERROR");
+                                Console.WriteLine("This command requires an argument!");
+                            }
+                            else
+                            {
+                                irc.RfcJoin(args[1]);
+                            }
+                            break;
 
-						if (lnth == 2)
-						{
-						irc.RfcPart(args [1]);
-						}
+                        case "part":
+                            if (lnth == 1)
+                            {
+                                msgcolours(msglevel.critcial, "ERROR");
+                                Console.WriteLine("This command requires an argument!");
+                            }
 
-						else if (lnth >= 3)
-                		{
-                		irc.RfcPart(args[1] + args[2]);	
-                		}
+                            if (lnth == 2)
+                            {
+                                irc.RfcPart(args[1]);
+                            }
 
-						break;
+                            else if (lnth >= 3)
+                            {
+                                irc.RfcPart(args[1] + args[2]);
+                            }
 
-					case "version":
-						Console.WriteLine(version);
-						break;
-					
-					case "target":
-						if (lnth == 1)
-						{
-							msgcolours(msglevel.critcial, "ERROR");
-							Console.WriteLine("This command requires an argument!");;
-						}
-						else
-						{
-							channel = args[1];
-						}
-						break;
+                            break;
 
-					case "ident":
-						msgcolours(msglevel.info, "INFO");
-						Console.Write ("Enter your ident pass:");
-						string pass = Console.ReadLine ();
-						irc.SendMessage(SendType.Message, "NickServ", string.Format("identify {0} {1}", botname, pass), Priority.High);
-						break;
+                        case "version":
+                            Console.WriteLine(version);
+                            break;
 
-					default :
-						msgcolours(msglevel.info, "INFO");
-						Console.WriteLine("Commands are, quit/stop, join, part, version and ident");
-						break;
-					}
-				} 
-				else 
-				{
-					if (string.IsNullOrEmpty(consolemessage))
-					{
-						msgcolours(msglevel.critcial, "ERROR");
-						Console.WriteLine("Message cannot be nothing!");
-					}
-					else
-					{
-						irc.SendMessage (SendType.Message, channel, string.Format ("{0}", consolemessage), Priority.High);
-						msgcolours(msglevel.message, "MESSAGE");
-						Console.WriteLine ("[" + DateTime.Now.ToShortTimeString () + "]" + "(" + channel + ") <" + botname + "> " + consolemessage);
-					}
-				}
-			}
+                        case "target":
+                            if (lnth == 1)
+                            {
+                                msgcolours(msglevel.critcial, "ERROR");
+                                Console.WriteLine("This command requires an argument!"); ;
+                            }
+                            else
+                            {
+                                channel = args[1];
+                            }
+                            break;
+
+                        case "ident":
+                            msgcolours(msglevel.info, "INFO");
+                            Console.Write("Enter your ident pass:");
+                            string pass = Console.ReadLine();
+                            irc.SendMessage(SendType.Message, "NickServ", string.Format("identify {0} {1}", botname, pass), Priority.High);
+                            break;
+
+                        default:
+                            msgcolours(msglevel.info, "INFO");
+                            Console.WriteLine("Commands are, quit/stop, join, part, version and ident");
+                            break;
+                    }
+                }
+                else
+                {
+                    if (string.IsNullOrEmpty(consolemessage))
+                    {
+                        msgcolours(msglevel.critcial, "ERROR");
+                        Console.WriteLine("Message cannot be nothing!");
+                    }
+                    else
+                    {
+                        irc.SendMessage(SendType.Message, channel, string.Format("{0}", consolemessage), Priority.High);
+                        msgcolours(msglevel.message, "MESSAGE");
+                        Console.WriteLine("[" + DateTime.Now.ToShortTimeString() + "]" + "(" + channel + ") <" + botname + "> " + consolemessage);
+                    }
+                }
+            }
         }
 
         public static int getmins()
@@ -387,14 +403,14 @@ namespace IRC
             time = time + time_mins;
             return time;
         }
-		public enum msglevel 
-		{
-			ok,
-			warning,
-			critcial,
-			info,
-			message
-		}
+        public enum msglevel
+        {
+            ok,
+            warning,
+            critcial,
+            info,
+            message
+        }
         public static void msgcolours(msglevel state, string message)
         {
             if (state == msglevel.ok)
@@ -429,14 +445,14 @@ namespace IRC
                 Console.ResetColor();
                 Console.Write(" ]   ");
             }
-			else if (state == msglevel.message)
-			{
-				Console.Write("[ ");
+            else if (state == msglevel.message)
+            {
+                Console.Write("[ ");
                 Console.ForegroundColor = ConsoleColor.Magenta;
                 Console.Write(message);
                 Console.ResetColor();
-				Console.Write(" ] ");
-			}
+                Console.Write(" ] ");
+            }
         }
     }
 }

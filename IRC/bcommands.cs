@@ -69,7 +69,7 @@ namespace IRC
                     break;
 
                 case "version":
-                    irc.SendMessage(SendType.Message, channel, "Nimbot" + version, Priority.High);
+                    irc.SendMessage(SendType.Message, channel, "Nimbot " + version, Priority.High);
                     break;
 
                 case "gettime":
@@ -149,17 +149,17 @@ namespace IRC
 					if (lnth == 1)
 					{
 						irc.RfcPart(channel);
-						//part.channelremove(channel);
+						part.channelremove(channel);
 					}
                 	else if (lnth == 2)
                 	{
                    		 irc.RfcPart(args[1]);
-						//part.channelremove(args[1]);
+						part.channelremove(args[1]);
                 	}
                 	else if (lnth >= 3)
                 	{
                 		irc.RfcPart(args[1] + args[2]);	
-						//part.channelremove(args[1]);
+						part.channelremove(args[1]);
                 	}
                     break;
 
