@@ -2,11 +2,9 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
   <MonoDevelop.Ide.Workbench ActiveDocument="IRC/Main.cs">
     <Files>
-      <File FileName="IRC/Main.cs" Line="329" Column="64" />
+      <File FileName="IRC/Main.cs" Line="358" Column="8" />
       <File FileName="IRC/bcommands.cs" Line="79" Column="31" />
-      <File FileName="IRC/commands/opitems.cs" Line="11" Column="64" />
-      <File FileName="IRC/commands/part.cs" Line="1" Column="1" />
-      <File FileName="IRC/startup.cs" Line="13" Column="14" />
+      <File FileName="IRC/startup.cs" Line="119" Column="44" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

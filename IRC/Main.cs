@@ -350,6 +350,13 @@ namespace IRC
                             }
                             break;
 
+						case "ns":
+						case "nickserv":
+							consolemessage = consolemessage.Replace("ns", "");
+							consolemessage = consolemessage.Replace("nickserv", "");
+							irc.SendMessage(SendType.Message, "NickServ", consolemessage, Priority.High);
+							break;
+
                         case "ident":
                             msgcolours(msglevel.info, "INFO");
                             Console.Write("Enter your ident pass:");

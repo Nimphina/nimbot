@@ -91,7 +91,7 @@ namespace IRC
                 reader.Close();
             }
         }
-        public static void stage3()
+        private static void stage3()
         {
             Console.WriteLine("Configuration file not found: Creating a blank config file.");
 
