@@ -14,8 +14,8 @@ namespace IRC
         {
 
             string[] args = message.TrimEnd().Split(' ');
-			Nimbot.msgcolours(IRC.Nimbot.msglevel.info, "INFO");
-            Console.WriteLine("Opsymbol detected!");
+			//Nimbot.msgcolours(IRC.Nimbot.msglevel.info, "INFO");
+            //Console.WriteLine("Opsymbol detected!");
             int lnth = args.Length;
             string command_check = args[0];
 

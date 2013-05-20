@@ -15,7 +15,7 @@ namespace IRC
         public static string rootchannel;
         public static string botop;
         public static string botname;
-        public static string version = "dev-1.1.8";
+        public static string version = "dev-1.1.9";
         public static string opsymbol;
         public static int timestart;
         public static string logging;
@@ -23,6 +23,7 @@ namespace IRC
         public static void Main()
         {
             Console.Title = "Nimbot " + version;
+			Console.SetWindowSize(10,20);
             Nimbot bot = new Nimbot();
         }
 
@@ -31,6 +32,7 @@ namespace IRC
             // Get start time and covert it into minutes so it can be used to calculate uptime
 
             timestart = getmins();
+
             startup.stage1(version);
             startup.stage2(out server, out port, out rootchannel, out botname, out botop, out opsymbol, out logging);
            
@@ -118,7 +120,6 @@ namespace IRC
 
                 foreach (string value in channel_list)
                 {
-
                     msgcolours(msglevel.info, "INFO");
                     Console.WriteLine("Joining {0}.", channel_list[i]);
                     irc.RfcJoin(channel_list[i]);
@@ -133,20 +134,17 @@ namespace IRC
             }
             finally
             {
-
                 msgcolours(msglevel.ok, "OK");
-                Console.Write("All channels joined successfully.");
+                Console.WriteLine("All channels joined successfully.");
 
                 if (logging == "enabled")
                 {
                     Console.WriteLine("");
                     msgcolours(msglevel.warning, "WARNING");
-                    Console.Write("Channel logging is enabled.");
+                    Console.WriteLine("Channel logging is enabled.");
                     Console.ResetColor();
                 }
 
-                Console.WriteLine("");
-                Console.WriteLine("----------------------------------Server messages--------------------------------");
                 Console.WriteLine("");
 
             }
@@ -239,7 +237,7 @@ namespace IRC
             string nick = e.Data.Nick;
             string message = e.Data.Message;
 
-            if (nick == "PING" || string.IsNullOrEmpty(nick) || nick == botname)
+            if (nick == "PING" || string.IsNullOrEmpty(nick) || nick == botname || string.IsNullOrEmpty(message) || message == ":")
             {
             }
             else
@@ -247,24 +245,15 @@ namespace IRC
                 if (string.IsNullOrEmpty(channel))
                 {
                     channel = "server";
+					msgcolours(msglevel.server, "SERVER");
+					Console.WriteLine("<{0}>: {1}", nick, message);
                 }
-                /*   try
-                   {
-                       if (message.Contains(botname))
-                       {
-                           Console.ForegroundColor = ConsoleColor.Red;
-                       }
-                   }
-                   catch (Exception f)
-                   {
-                       Console.WriteLine(f.Message);
-                   }
-                   * Seems to be causing exceptions for an unknown reason.
-                   */
-                msgcolours(msglevel.message, "MESSAGE");
-                Console.WriteLine("({0}) <{1}> {2}", channel, nick, message);
-
-                Console.ResetColor();
+				else
+				{
+					msgcolours(msglevel.message, "MESSAGE");
+					Console.WriteLine("({0}) <{1}>: {2}", channel, nick, message);
+				}
+                
             }
         }
 
@@ -288,12 +277,15 @@ namespace IRC
             while (true)
             {
                 string consolemessage = Console.ReadLine();
+				consolemessage = consolemessage.TrimStart(' ');
+
                 if (consolemessage.StartsWith("/"))
                 {
+					consolemessage = consolemessage.Trim(new Char[] { '/', });
                     string[] args = consolemessage.TrimEnd().Split(' ');
                     int lnth = args.Length;
 
-                    string command_check = args[0].Trim(new Char[] { '/', });
+                    string command_check = args[0];
 
                     switch (command_check)
                     {
@@ -354,12 +346,14 @@ namespace IRC
 						case "nickserv":
 							consolemessage = consolemessage.Replace("ns", "");
 							consolemessage = consolemessage.Replace("nickserv", "");
+							consolemessage = consolemessage.TrimStart(' ');
+							consolemessage = consolemessage.TrimEnd(' ');
 							irc.SendMessage(SendType.Message, "NickServ", consolemessage, Priority.High);
 							break;
 
                         case "ident":
                             msgcolours(msglevel.info, "INFO");
-                            Console.Write("Enter your ident pass:");
+                            Console.Write("Enter your ident pass: ");
                             string pass = Console.ReadLine();
                             irc.SendMessage(SendType.Message, "NickServ", string.Format("identify {0} {1}", botname, pass), Priority.High);
                             break;
@@ -416,50 +410,49 @@ namespace IRC
             warning,
             critcial,
             info,
-            message
+            message,
+			server
         }
         public static void msgcolours(msglevel state, string message)
         {
+			Console.Write("[");
             if (state == msglevel.ok)
             {
-                Console.Write("[ ");
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.Write(message);
-                Console.ResetColor();
-                Console.Write(" ]   ");
+                Console.ResetColor();               
             }
             else if (state == msglevel.warning)
             {
-                Console.Write("[ ");
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.Write(message);
                 Console.ResetColor();
-                Console.Write(" ]   ");
             }
             else if (state == msglevel.critcial)
-            {
-                Console.Write("[ ");
+			{
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.Write(message);
                 Console.ResetColor();
-                Console.Write(" ]   ");
             }
             else if (state == msglevel.info)
             {
-                Console.Write("[ ");
                 Console.ForegroundColor = ConsoleColor.Blue;
                 Console.Write(message);
                 Console.ResetColor();
-                Console.Write(" ]   ");
             }
             else if (state == msglevel.message)
             {
-                Console.Write("[ ");
                 Console.ForegroundColor = ConsoleColor.Magenta;
                 Console.Write(message);
                 Console.ResetColor();
-                Console.Write(" ] ");
             }
+			else if (state == msglevel.server)
+            {
+                Console.ForegroundColor = ConsoleColor.DarkCyan;
+                Console.Write(message);
+                Console.ResetColor();
+            }
+			Console.Write("]   ");
         }
     }
 }

@@ -49,7 +49,7 @@ namespace IRC
             Console.WriteLine("                      Ver: {0} written by Nimphina", version);
             Console.WriteLine("                 This bot may or may not have super cow powers");
             Console.WriteLine("");
-            Console.WriteLine("---------------------------------------------------------------------------------");
+           // Console.WriteLine("---------------------------------------------------------------------------------");
             Console.ResetColor();
 
         }
