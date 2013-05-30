@@ -10,12 +10,12 @@ namespace IRC
     class bcommands
     {
 
-        public static void bc(string botop, string channel, string nick, string message, string server, int port, string version, ref string botname, int timestart, IrcClient irc)
+        public static void bc(string botop, string channel, string nick, string message, string server, int port, string version, ref string botname, ref string opsymbol, int timestart, IrcClient irc)
         {
 
             string[] args = message.TrimEnd().Split(' ');
 			//Nimbot.msgcolours(IRC.Nimbot.msglevel.info, "INFO");
-            //Console.WriteLine("Opsymbol detected!");
+            Console.WriteLine("Opsymbol detected!");
             int lnth = args.Length;
             string command_check = args[0];
 
@@ -75,6 +75,12 @@ namespace IRC
                 case "gettime":
                     irc.SendMessage(SendType.Message, channel, string.Format("Bot server time is {0}", DateTime.Now.ToLongTimeString()), Priority.High);
                     break;
+
+				case "say":
+					message = message.Replace("say", "");
+					message = message.TrimStart(new char[]{' '});
+					irc.SendMessage(SendType.Message, channel, message, Priority.High);
+					break;
 
                 case "uptime":
 
@@ -144,22 +150,25 @@ namespace IRC
                     }
                     break;
 
+				case "botop":
+				case "operator":
+				case "owner":
+					irc.SendMessage(SendType.Message, channel, botop, Priority.High);
+					break;
+
 				case "leave":
                 case "part":
 					if (lnth == 1)
 					{
-						irc.RfcPart(channel);
-						part.channelremove(channel);
+						part.channelremove(channel,"leaving",  irc);
 					}
                 	else if (lnth == 2)
                 	{
-                   		 irc.RfcPart(args[1]);
-						part.channelremove(args[1]);
+						part.channelremove(args[1], "leaving", irc);
                 	}
                 	else if (lnth >= 3)
-                	{
-                		irc.RfcPart(args[1] + args[2]);	
-						part.channelremove(args[1]);
+                	{	
+						part.channelremove(args[1],args[2], irc);
                 	}
                     break;
 
@@ -194,6 +203,34 @@ namespace IRC
                 case "kick":
                     opitems.kick(channel, botop, nick, args, lnth, irc);
                     break;
+
+				case "opchar":
+				case "opsymbol":
+					if (nick == botop)
+					{
+						if (lnth == 1)
+						{
+							irc.SendMessage(SendType.Message, channel, "I need a new symbol!", Priority.High);
+						}
+						else if (lnth > 1)
+						{
+							if (args[1].Length == 1)
+							{
+								opsymbol = args[1];
+								irc.SendMessage(SendType.Message, channel, string.Format("The operator symbol has been changed to {0}", args[1]), Priority.High);
+								Console.WriteLine("Operator symbol has been changed to {0}", args[1] );
+							}
+							else
+							{
+								irc.SendMessage(SendType.Message, channel, "The symbol needs to be a single character.", Priority.High);
+							}
+						}
+					}
+					else
+					{
+						irc.SendMessage(SendType.Message, channel, "You are not allowed to perform that command!", Priority.High);
+					}
+					break;
 
 				case "restart": 
 					if (nick == botop)

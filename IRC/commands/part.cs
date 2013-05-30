@@ -8,9 +8,9 @@ namespace IRC
 {
     public class part
     {
-        public static void channelremove(string channel)
+        public static void channelremove(string channel, string leaving_message, IrcClient irc)
         {
-
+			irc.RfcPart(channel, leaving_message);
             System.IO.File.Copy("channel.list", "channel.tmp", true);
             StreamWriter writer = new StreamWriter("channel.list");
             StreamReader reader = new StreamReader("channel.tmp");

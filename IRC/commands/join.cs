@@ -10,7 +10,7 @@ namespace IRC
     {
         public static void channeladd(string channel, IrcClient irc)
         {
-            StringBuilder sb = new StringBuilder();
+
             string line;
             bool write = true;
               
