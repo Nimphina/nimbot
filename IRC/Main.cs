@@ -411,6 +411,12 @@ namespace IRC
 
         public static int getmins()
         {
+			/*
+			 * I will get this working properly. 
+			 * Eventally.
+			 * Issue: Breaks after midnight
+			 * 
+			 */
             string rawtime = DateTime.Now.ToShortTimeString();
             bool pmtrue = rawtime.Contains("PM");
 

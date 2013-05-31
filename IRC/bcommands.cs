@@ -14,13 +14,17 @@ namespace IRC
         {
 
             string[] args = message.TrimEnd().Split(' ');
-			//Nimbot.msgcolours(IRC.Nimbot.msglevel.info, "INFO");
-            Console.WriteLine("Opsymbol detected!");
             int lnth = args.Length;
             string command_check = args[0];
 
             switch (command_check)
             {
+				case "test":
+					if(nick == botop)
+					{
+						irc.SendMessage(SendType.Message, channel, "\"dadasdasd\"" , Priority.High);
+					}
+					break;
             	case "U":
                 case "u":
                     u.umcf(args, lnth, channel, nick, irc);
