@@ -31,6 +31,14 @@
     <Externalconsole>true</Externalconsole>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="GoogleSearchAPI, Version=0.4.0.133, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>libs\GoogleSearchAPI.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=3.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>libs\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="Meebey.SmartIrc4net">
       <HintPath>libs\Meebey.SmartIrc4net.dll</HintPath>
@@ -39,8 +47,10 @@
   <ItemGroup>
     <Compile Include="bcommands.cs" />
     <Compile Include="commands\bunny.cs" />
+    <Compile Include="commands\google.cs" />
     <Compile Include="commands\join.cs" />
     <Compile Include="commands\opitems.cs" />
+    <Compile Include="commands\quotes.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="commands\addition.cs" />

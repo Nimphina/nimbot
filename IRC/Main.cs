@@ -15,7 +15,7 @@ namespace IRC
         public static string rootchannel;
         public static string botop;
         public static string botname;
-        public static string version = "dev-1.1.10";
+        public static string version = "dev-1.1.11";
         public static string opsymbol;
         public static int timestart;
         public static string logging;
@@ -23,7 +23,7 @@ namespace IRC
         public static void Main()
         {
             Console.Title = "Nimbot " + version;
-			Console.SetWindowSize(10,20);
+			//Console.SetWindowSize(100,100);
             Nimbot bot = new Nimbot();
         }
 
@@ -317,7 +317,6 @@ namespace IRC
 
                     switch (command_check)
                     {
-
                         case "stop":
                         case "quit":
                             Environment.Exit(0);
@@ -332,6 +331,7 @@ namespace IRC
                             else
                             {
                                 irc.RfcJoin(args[1]);
+                                join.channeladd(args[1], irc);
                             }
                             break;
 
@@ -344,12 +344,12 @@ namespace IRC
 
                             if (lnth == 2)
                             {
-                                irc.RfcPart(args[1]);
+                                part.channelremove(args[1], "leaving", irc);
                             }
 
                             else if (lnth >= 3)
                             {
-                                irc.RfcPart(args[1] + args[2]);
+                                part.channelremove(args[1], args[2], irc);
                             }
 
                             break;
@@ -477,7 +477,7 @@ namespace IRC
             }
             else if (state == msglevel.message)
             {
-                Console.ForegroundColor = ConsoleColor.Magenta;
+                Console.ForegroundColor = ConsoleColor.DarkRed;
                 Console.Write(message);
                 Console.ResetColor();
             }

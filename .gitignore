@@ -9,6 +9,8 @@ TestResults
 
 # User-specific files
 *.suo
+IRC.suo
+IRC.v11.suo
 *.user
 *.sln.docstates
 config.conf

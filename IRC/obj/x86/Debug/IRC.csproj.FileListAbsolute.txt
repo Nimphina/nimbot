@@ -5,3 +5,8 @@ C:\Users\Daniel\Documents\GitHub\nimbot\IRC\bin\Debug\log4net.dll
 C:\Users\Daniel\Documents\GitHub\nimbot\IRC\obj\x86\Debug\IRC.csprojResolveAssemblyReference.cache
 C:\Users\Daniel\Documents\GitHub\nimbot\IRC\obj\x86\Debug\IRC.exe
 C:\Users\Daniel\Documents\GitHub\nimbot\IRC\obj\x86\Debug\IRC.pdb
+C:\Users\Daniel\Documents\GitHub\nimbot\IRC\bin\Debug\GoogleSearchAPI.dll
+C:\Users\Daniel\Documents\GitHub\nimbot\IRC\bin\Debug\Newtonsoft.Json.dll
+C:\Users\Daniel\Documents\GitHub\nimbot\IRC\bin\Debug\GoogleSearchAPI.pdb
+C:\Users\Daniel\Documents\GitHub\nimbot\IRC\bin\Debug\GoogleSearchAPI.xml
+C:\Users\Daniel\Documents\GitHub\nimbot\IRC\bin\Debug\Newtonsoft.Json.xml

@@ -25,6 +25,19 @@ namespace IRC
 						irc.SendMessage(SendType.Message, channel, "\"dadasdasd\"" , Priority.High);
 					}
 					break;
+                
+                case "g":
+                case "google":
+                    message = message.Replace(args[0], "");
+					message = message.TrimStart(new char[]{' '});
+                    google.search(message, channel, nick, irc);
+                    break;
+
+                case "help":
+                    irc.SendMessage(SendType.Message, channel, "Avalible commands are:", Priority.High);
+                    irc.SendMessage(SendType.Message, channel, "u, reddit, add, subtract, minus, multiply, divide, wafflebunny, ping, info, version, join, part, uptime", Priority.High);
+                    break;
+
             	case "U":
                 case "u":
                     u.umcf(args, lnth, channel, nick, irc);
@@ -58,6 +71,10 @@ namespace IRC
                 case "wafflebunny":
                 case "bunnywaffle":
                     bunny.waffle(channel, irc);
+                    break;
+
+                case "fortune":
+                    quotes.quotegetter(channel, irc);
                     break;
 
                 //All hardcoded, non class commands
@@ -222,6 +239,7 @@ namespace IRC
 							{
 								opsymbol = args[1];
 								irc.SendMessage(SendType.Message, channel, string.Format("The operator symbol has been changed to {0}", args[1]), Priority.High);
+                                Nimbot.msgcolours(Nimbot.msglevel.info, "INFO");
 								Console.WriteLine("Operator symbol has been changed to {0}", args[1] );
 							}
 							else
