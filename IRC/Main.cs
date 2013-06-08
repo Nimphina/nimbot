@@ -15,10 +15,10 @@ namespace IRC
         public static string rootchannel;
         public static string botop;
         public static string botname;
-        public static string version = "dev-1.1.11";
+        public static string version = "dev-1.1.12";
         public static string opsymbol;
-        public static int timestart;
         public static string logging;
+        public static DateTime StartTime = DateTime.Now;
 
         public static void Main()
         {
@@ -29,9 +29,6 @@ namespace IRC
 
         public Nimbot()
         {
-            // Get start time and covert it into minutes so it can be used to calculate uptime
-
-            timestart = getmins();
 
             startup.stage1(version);
             startup.stage2(out server, out port, out rootchannel, out botname, out botop, out opsymbol, out logging);
@@ -218,6 +215,7 @@ namespace IRC
 			msgcolours(msglevel.channel, "CHANNEL");
 			Console.WriteLine("{0} has given op to {1} in channel {2}.", e.Data.Nick, e.Data.RawMessageArray[4], e.Data.Channel);
         }
+
 		void OnDeop(object sender, DeopEventArgs e)
         {
 			msgcolours(msglevel.channel, "CHANNEL");
@@ -409,35 +407,7 @@ namespace IRC
             }
         }
 
-        public static int getmins()
-        {
-			/*
-			 * I will get this working properly. 
-			 * Eventally.
-			 * Issue: Breaks after midnight
-			 * 
-			 */
-            string rawtime = DateTime.Now.ToShortTimeString();
-            bool pmtrue = rawtime.Contains("PM");
-
-            rawtime = rawtime.Replace("AM", "");
-            rawtime = rawtime.Replace("PM", "");
-            rawtime = rawtime.Replace(":", "");
-            int time = int.Parse(rawtime);
-
-            if (pmtrue == true)
-            {
-                time += 1200;
-            }
-            int time_mins = 0;
-            while (time >= 100)
-            {
-                time -= 100;
-                time_mins += 60;
-            }
-            time = time + time_mins;
-            return time;
-        }
+      
         public enum msglevel
         {
             ok,

@@ -104,26 +104,10 @@ namespace IRC
 					break;
 
                 case "uptime":
+                    DateTime NowTime = DateTime.Now;
+                    TimeSpan diff = NowTime.Subtract(Nimbot.StartTime);
 
-                    int timenow = Nimbot.getmins();
-
-                    int minutes = timenow - timestart;
-                    int hour = 0;
-					string hrst = "Hours"; string minst = "Minutes";
-                    while (minutes >= 60)
-                    {
-                        minutes -= 60;
-                        hour++;
-                    }
-					if (hour <= 1)
-					{
-						hrst = "Hour";
-					}
-					if (minutes <= 1)
-					{
-						minst = "Minute";
-					}
-					irc.SendMessage(SendType.Message, channel, string.Format("{0} {1} {2} {3}",hour, hrst, minutes, minst), Priority.High);
+                    irc.SendMessage(SendType.Message, channel, string.Format("Uptime: {0} days {1} hours {2} minutes {3} seconds", diff.Days, diff.Hours, diff.Minutes, diff.Seconds));
                     break;
 		
 				case "q":
