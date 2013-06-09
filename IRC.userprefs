@@ -1,9 +1,9 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="IRC/bcommands.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="IRC/Main.cs">
     <Files>
-      <File FileName="IRC/Main.cs" Line="475" Column="16" />
-      <File FileName="IRC/bcommands.cs" Line="39" Column="28" />
+      <File FileName="IRC/Main.cs" Line="235" Column="107" />
+      <File FileName="IRC/bcommands.cs" Line="1" Column="1" />
       <File FileName="IRC/commands/part.cs" Line="28" Column="18" />
     </Files>
   </MonoDevelop.Ide.Workbench>

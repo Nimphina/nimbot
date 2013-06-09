@@ -169,7 +169,7 @@ namespace IRC
             {
                 char opsymbolchar = Convert.ToChar(opsymbol);
                 message = message.TrimStart(new Char[] { opsymbolchar });
-                bcommands.bc(botop, channel, nick, message, server, port, version, ref botname, ref opsymbol, timestart, irc);
+                bcommands.bc(botop, channel, nick, message, server, port, version, ref botname, ref opsymbol, irc);
             }
 
             else if (nick == "Ralph")
@@ -232,7 +232,7 @@ namespace IRC
             {
                 char opsymbolchar = Convert.ToChar(opsymbol);
                 message = message.Trim(new Char[] { opsymbolchar });
-                bcommands.bc(botop, nick, nick, message, server, port, version, ref botname, ref opsymbol, timestart, irc);
+                bcommands.bc(botop, nick, nick, message, server, port, version, ref botname, ref opsymbol, irc);
             }
         }
 

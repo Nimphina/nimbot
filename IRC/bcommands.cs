@@ -10,7 +10,7 @@ namespace IRC
     class bcommands
     {
 
-        public static void bc(string botop, string channel, string nick, string message, string server, int port, string version, ref string botname, ref string opsymbol, int timestart, IrcClient irc)
+        public static void bc(string botop, string channel, string nick, string message, string server, int port, string version, ref string botname, ref string opsymbol, IrcClient irc)
         {
 
             string[] args = message.TrimEnd().Split(' ');
