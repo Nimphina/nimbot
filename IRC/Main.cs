@@ -15,7 +15,7 @@ namespace IRC
         public static string rootchannel;
         public static string botop;
         public static string botname;
-        public static string version = "dev-1.1.12";
+        public static string version = "dev-1.1.13";
         public static string opsymbol;
         public static string logging;
         public static DateTime StartTime = DateTime.Now;
@@ -155,6 +155,8 @@ namespace IRC
             string message = e.Data.Message;
             string nick = e.Data.Nick;
             string bn = botname.ToLower(); // So that the how are you thing would work
+            Random rand = new Random();
+            int random = rand.Next(1,50);
 
             if (logging == "enabled")
             {
@@ -170,6 +172,13 @@ namespace IRC
                 char opsymbolchar = Convert.ToChar(opsymbol);
                 message = message.TrimStart(new Char[] { opsymbolchar });
                 bcommands.bc(botop, channel, nick, message, server, port, version, ref botname, ref opsymbol, irc);
+            }
+            else if (random == 2 || message.Length > 15)
+            {
+                StreamWriter quoter = new StreamWriter("quotes", true);
+                quoter.WriteLine("<{0}>: {1}", nick, message);
+                quoter.Close();
+                irc.SendMessage(SendType.Message, channel, "Quoted!", Priority.High);
             }
 
             else if (nick == "Ralph")
