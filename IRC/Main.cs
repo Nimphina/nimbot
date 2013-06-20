@@ -15,7 +15,7 @@ namespace IRC
         public static string rootchannel;
         public static string botop;
         public static string botname;
-        public static string version = "dev-1.1.13";
+        public static string version = "dev-1.1.15";
         public static string opsymbol;
         public static string logging;
         public static DateTime StartTime = DateTime.Now;
@@ -37,8 +37,10 @@ namespace IRC
             irc.ActiveChannelSyncing = true;
             irc.AutoReconnect = true;
             irc.AutoRetry = true;
+            irc.AutoRetryDelay = 10;
             irc.AutoRelogin = true;
             irc.AutoJoinOnInvite = true;
+            irc.CtcpVersion = "Nimbot " + version;
             irc.SendDelay = 300;
 
             //Setting some eventhandlers
@@ -156,7 +158,7 @@ namespace IRC
             string nick = e.Data.Nick;
             string bn = botname.ToLower(); // So that the how are you thing would work
             Random rand = new Random();
-            int random = rand.Next(1,50);
+            int random = rand.Next(1,70);
 
             if (logging == "enabled")
             {
@@ -173,7 +175,7 @@ namespace IRC
                 message = message.TrimStart(new Char[] { opsymbolchar });
                 bcommands.bc(botop, channel, nick, message, server, port, version, ref botname, ref opsymbol, irc);
             }
-            else if (random == 2 || message.Length > 15)
+            else if (random == 2 && message.Length > 15)
             {
                 StreamWriter quoter = new StreamWriter("quotes", true);
                 quoter.WriteLine("<{0}>: {1}", nick, message);

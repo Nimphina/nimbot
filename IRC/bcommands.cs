@@ -86,7 +86,7 @@ namespace IRC
                     break;
 
                 case "info":
-                    irc.SendMessage(SendType.Message, channel, "I am a bot written by Nimphina, very messily written using the SmartIrc4net lib for irc stuff. Sauce code: http://github.com/Nimphina/Nimbot", Priority.High);
+                    irc.SendMessage(SendType.Message, channel, string.Format("I am a bot written by Nimphina, very messily written using the SmartIrc4net {0} lib for irc stuff. Sauce code: http://github.com/Nimphina/Nimbot", irc.VersionNumber), Priority.High);
                     break;
 
                 case "version":
@@ -187,6 +187,10 @@ namespace IRC
 					{
 						irc.SendMessage(SendType.Message, channel, "You are not allowed to perform that command!", Priority.High);
 					}
+                    break;
+
+                case "serverinfo":
+                    irc.SendMessage(SendType.Message, channel, string.Format("Hostname: {0} OS: {1}, LocalTime: {2}", Environment.MachineName, Environment.OSVersion, DateTime.Now));
                     break;
 
                 //Bot op only commands
