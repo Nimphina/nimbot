@@ -61,6 +61,7 @@
     <Compile Include="commands\reddit.cs" />
     <Compile Include="startup.cs" />
     <Compile Include="commands\part.cs" />
+    <Compile Include="commands\versionchk.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

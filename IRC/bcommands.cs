@@ -35,7 +35,7 @@ namespace IRC
 
                 case "help":
                     irc.SendMessage(SendType.Message, channel, "Avalible commands are:", Priority.High);
-                    irc.SendMessage(SendType.Message, channel, "u, reddit, add, subtract, minus, multiply, divide, wafflebunny, ping, info, version, join, part, uptime", Priority.High);
+                    irc.SendMessage(SendType.Message, channel, "u, reddit, add, subtract, minus, multiply, divide, wafflebunny, ping, info, version, join, part, uptime, say", Priority.High);
                     break;
 
             	case "U":
@@ -77,6 +77,10 @@ namespace IRC
                     quotes.quotegetter(channel, irc);
                     break;
 
+                case "versioncheck":
+                    versionchk.checker(version, channel, irc);
+                    break;
+
                 //All hardcoded, non class commands
                 case "Ping":
                 case "ping":
@@ -98,7 +102,8 @@ namespace IRC
                     break;
 
 				case "say":
-					message = message.Replace("say", "");
+                    message = "~" + message; //It's a shitty way to just remove the command from the string but if anyone has a better way...
+					message = message.Replace("~say", "");
 					message = message.TrimStart(new char[]{' '});
 					irc.SendMessage(SendType.Message, channel, message, Priority.High);
 					break;

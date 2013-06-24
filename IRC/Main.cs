@@ -15,7 +15,7 @@ namespace IRC
         public static string rootchannel;
         public static string botop;
         public static string botname;
-        public static string version = "dev-1.1.15";
+        public static string version = "dev-1.1.16";
         public static string opsymbol;
         public static string logging;
         public static DateTime StartTime = DateTime.Now;
