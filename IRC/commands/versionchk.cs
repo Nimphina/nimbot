@@ -11,19 +11,22 @@ namespace IRC
 {
     class versionchk
     {
-        public static void checker(string clientversion, string channel,  IrcClient irc)
+        public static string checker(string clientversion, bool infos)
         {
             try
             {
                 TcpClient tcpclnt = new TcpClient();
-                Nimbot.msgcolours(IRC.Nimbot.msglevel.info, "INFO");
-                Console.WriteLine("Connecting to version server");
+				if(infos == true){
+                	Nimbot.msgcolours(IRC.Nimbot.msglevel.info, "INFO");
+                	Console.WriteLine("Connecting to version server");
+				}
 
                 tcpclnt.Connect("192.210.212.82", 2051);
                 // use the ipaddress as in the server program
-
-                Nimbot.msgcolours(IRC.Nimbot.msglevel.ok, "OK");
-                Console.WriteLine("Connected to version server");
+				if(infos == true){
+                	Nimbot.msgcolours(IRC.Nimbot.msglevel.ok, "OK");
+                	Console.WriteLine("Connected to version server");
+				}
                 Stream stm = tcpclnt.GetStream();
 
                 byte[] bb = new byte[100];
@@ -42,18 +45,18 @@ namespace IRC
                 version = version.Replace(".", "");
                 int versionint = int.Parse(version);
 
-                Console.WriteLine(versionint);
+                //Console.WriteLine(versionint);
                 if (clientint < versionint)
                 {
-                    irc.SendMessage(SendType.Message, channel, "A new version of Nimbot is avalible!", Priority.High);
+					return "A new version is avalible!";
                 }
                 else if (clientint > versionint)
                 {
-                    irc.SendMessage(SendType.Message, channel, "This seems to be a newer version that what the server says the new version is.", Priority.High);
+					return "I am ahead of the server";
                 }
                 else
                 {
-                    irc.SendMessage(SendType.Message, channel, "You are up to date!", Priority.High);
+					return "I am up to date!";
                 }
             }
 
@@ -61,6 +64,7 @@ namespace IRC
             {
                 Nimbot.msgcolours(IRC.Nimbot.msglevel.critcial, "ERROR");
                 Console.WriteLine("Error in connecting" + e.StackTrace);
+				return "Error in connection to server";
             }
         }
     }

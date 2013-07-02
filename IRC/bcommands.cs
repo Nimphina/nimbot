@@ -77,8 +77,8 @@ namespace IRC
                     quotes.quotegetter(channel, irc);
                     break;
 
-                case "versioncheck":
-                    versionchk.checker(version, channel, irc);
+				case "versioncheck":
+					irc.SendMessage(SendType.Message, channel, string.Format(versionchk.checker(version, true)), Priority.High);
                     break;
 
                 //All hardcoded, non class commands
@@ -86,7 +86,7 @@ namespace IRC
                 case "ping":
 					Nimbot.msgcolours(IRC.Nimbot.msglevel.info, "INFO");
                     Console.WriteLine("ping command");
-                    irc.SendMessage(SendType.Message, string.Format(channel, "#botspam"), "pong", Priority.High);
+                    irc.SendMessage(SendType.Message, channel, "pong", Priority.High);
                     break;
 
                 case "info":
