@@ -23,7 +23,7 @@ namespace IRC
         public static void Main()
         {
             Console.Title = "Nimbot " + version;
-			//Console.SetWindowSize(100,100);
+            //Console.SetWindowSize(100,100);
             Nimbot bot = new Nimbot();
         }
 
@@ -32,7 +32,7 @@ namespace IRC
 
             startup.stage1(version);
             startup.stage2(out server, out port, out rootchannel, out botname, out botop, out opsymbol, out logging);
-           
+
             irc.Encoding = System.Text.Encoding.UTF8;
             irc.ActiveChannelSyncing = true;
             irc.AutoReconnect = true;
@@ -50,7 +50,7 @@ namespace IRC
             irc.OnDisconnected += new EventHandler(OnDisconnected);
             irc.OnChannelMessage += new IrcEventHandler(OnChannelMessage);
             irc.OnOp += new OpEventHandler(OnOp);
-			irc.OnDeop += new DeopEventHandler(OnDeop);
+            irc.OnDeop += new DeopEventHandler(OnDeop);
             irc.OnQueryMessage += new IrcEventHandler(OnQueryMessage);
             irc.OnRawMessage += new IrcEventHandler(OnMessage);
             irc.OnBan += new BanEventHandler(OnBan);
@@ -88,7 +88,7 @@ namespace IRC
 
             irc.Login(botname, botname, 0, string.Format("{0}-bot", botname));
 
-			msgcolours(msglevel.info, "INFO");
+            msgcolours(msglevel.info, "INFO");
             Console.WriteLine("Joining rootchannel {0}.", rootchannel);
             irc.RfcJoin(rootchannel);
 
@@ -158,7 +158,7 @@ namespace IRC
             string nick = e.Data.Nick;
             string bn = botname.ToLower(); // So that the how are you thing would work
             Random rand = new Random();
-            int random = rand.Next(1,70);
+            int random = rand.Next(1, 70);
 
             if (logging == "enabled")
             {
@@ -223,14 +223,14 @@ namespace IRC
 
         void OnOp(object sender, OpEventArgs e)
         {
-			msgcolours(msglevel.channel, "CHANNEL");
-			Console.WriteLine("{0} has given op to {1} in channel {2}.", e.Data.Nick, e.Data.RawMessageArray[4], e.Data.Channel);
+            msgcolours(msglevel.channel, "CHANNEL");
+            Console.WriteLine("{0} has given op to {1} in channel {2}.", e.Data.Nick, e.Data.RawMessageArray[4], e.Data.Channel);
         }
 
-		void OnDeop(object sender, DeopEventArgs e)
+        void OnDeop(object sender, DeopEventArgs e)
         {
-			msgcolours(msglevel.channel, "CHANNEL");
-			Console.WriteLine("{0} has removed op from {1} in channel {2}.", e.Data.Nick, e.Data.RawMessageArray[4], e.Data.Channel);
+            msgcolours(msglevel.channel, "CHANNEL");
+            Console.WriteLine("{0} has removed op from {1} in channel {2}.", e.Data.Nick, e.Data.RawMessageArray[4], e.Data.Channel);
         }
 
         void OnQueryMessage(object sender, IrcEventArgs e)
@@ -252,7 +252,7 @@ namespace IRC
             string channel = e.Data.Channel;
             string nick = e.Data.Nick;
             string message = e.Data.Message;
-			//Console.WriteLine(e.Data.Nick + e.Data.RawMessage);
+            //Console.WriteLine(e.Data.Nick + e.Data.RawMessage);
 
             if (nick == "PING" || string.IsNullOrEmpty(nick) || nick == botname || string.IsNullOrEmpty(message) || message == ":")
             {
@@ -262,43 +262,44 @@ namespace IRC
                 if (string.IsNullOrEmpty(channel))
                 {
                     channel = "server";
-					msgcolours(msglevel.server, "SERVER");
-					Console.WriteLine("<{0}>: {1}", nick, message);
+                    msgcolours(msglevel.server, "SERVER");
+                    Console.WriteLine("<{0}>: {1}", nick, message);
                 }
-				else
-				{
+                else
+                {
 
-					if(e.Data.RawMessageArray[1] == "PART")
-					{
-						msgcolours(msglevel.channel, "CHANNEL");
-						Console.WriteLine("{0} has parted {1}", nick, e.Data.RawMessageArray[2]);
-					}
-					else if(e.Data.RawMessageArray[1] == "JOIN")
-					{
-						msgcolours(msglevel.channel, "CHANNEL");
-						Console.WriteLine("{0} has joined {1}", nick, e.Data.RawMessageArray[2]);
-					}
-					else{
-					msgcolours(msglevel.message, "MESSAGE");
-					Console.WriteLine("({0}) <{1}>: {2}", channel, nick, message);
-					}
-				}
+                    if (e.Data.RawMessageArray[1] == "PART")
+                    {
+                        msgcolours(msglevel.channel, "CHANNEL");
+                        Console.WriteLine("{0} has parted {1}", nick, e.Data.RawMessageArray[2]);
+                    }
+                    else if (e.Data.RawMessageArray[1] == "JOIN")
+                    {
+                        msgcolours(msglevel.channel, "CHANNEL");
+                        Console.WriteLine("{0} has joined {1}", nick, e.Data.RawMessageArray[2]);
+                    }
+                    else
+                    {
+                        msgcolours(msglevel.message, "MESSAGE");
+                        Console.WriteLine("({0}) <{1}>: {2}", channel, nick, message);
+                    }
+                }
             }
         }
 
         void OnBan(object sender, BanEventArgs e)
         {
-			if (e.Data.RawMessageArray[4].Contains(string.Format (botname + "-bot")))
-			{
-				msgcolours(msglevel.warning, "WARNING");
-            	Console.WriteLine("{0} was banned from {1} by {2}.", botname, e.Data.Channel, e.Data.Nick);
-				part.channelremove(e.Data.Channel, "BANNED", irc);
-			}
-			else
-			{
-				msgcolours(msglevel.channel, "CHANNEL");
-				Console.WriteLine("{0} was banned from {1} by {2}.", e.Data.RawMessageArray[4], e.Data.Channel, e.Data.Nick);
-			}
+            if (e.Data.RawMessageArray[4].Contains(string.Format(botname + "-bot")))
+            {
+                msgcolours(msglevel.warning, "WARNING");
+                Console.WriteLine("{0} was banned from {1} by {2}.", botname, e.Data.Channel, e.Data.Nick);
+                part.channelremove(e.Data.Channel, "BANNED", irc);
+            }
+            else
+            {
+                msgcolours(msglevel.channel, "CHANNEL");
+                Console.WriteLine("{0} was banned from {1} by {2}.", e.Data.RawMessageArray[4], e.Data.Channel, e.Data.Nick);
+            }
         }
 
         void OnTopicChange(object sender, TopicChangeEventArgs e)
@@ -314,11 +315,11 @@ namespace IRC
             while (true)
             {
                 string consolemessage = Console.ReadLine();
-				consolemessage = consolemessage.TrimStart(' ');
+                consolemessage = consolemessage.TrimStart(' ');
 
                 if (consolemessage.StartsWith("/"))
                 {
-					consolemessage = consolemessage.TrimStart(new Char[] { '/', });
+                    consolemessage = consolemessage.TrimStart(new Char[] { '/', });
                     string[] args = consolemessage.TrimEnd().Split(' ');
                     int lnth = args.Length;
 
@@ -379,14 +380,14 @@ namespace IRC
                             }
                             break;
 
-						case "ns":
-						case "nickserv":
-							consolemessage = consolemessage.Replace("ns", "");
-							consolemessage = consolemessage.Replace("nickserv", "");
-							consolemessage = consolemessage.TrimStart(' ');
-							consolemessage = consolemessage.TrimEnd(' ');
-							irc.SendMessage(SendType.Message, "NickServ", consolemessage, Priority.High);
-							break;
+                        case "ns":
+                        case "nickserv":
+                            consolemessage = consolemessage.Replace("ns", "");
+                            consolemessage = consolemessage.Replace("nickserv", "");
+                            consolemessage = consolemessage.TrimStart(' ');
+                            consolemessage = consolemessage.TrimEnd(' ');
+                            irc.SendMessage(SendType.Message, "NickServ", consolemessage, Priority.High);
+                            break;
 
                         case "ident":
                             msgcolours(msglevel.info, "INFO");
@@ -418,7 +419,7 @@ namespace IRC
             }
         }
 
-      
+
         public enum msglevel
         {
             ok,
@@ -426,17 +427,17 @@ namespace IRC
             critcial,
             info,
             message,
-			server,
-			channel
+            server,
+            channel
         }
         public static void msgcolours(msglevel state, string message)
         {
-			Console.Write("[");
+            Console.Write("[");
             if (state == msglevel.ok)
             {
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.Write(message);
-                Console.ResetColor();               
+                Console.ResetColor();
             }
             else if (state == msglevel.warning)
             {
@@ -445,7 +446,7 @@ namespace IRC
                 Console.ResetColor();
             }
             else if (state == msglevel.critcial)
-			{
+            {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.Write(message);
                 Console.ResetColor();
@@ -462,19 +463,19 @@ namespace IRC
                 Console.Write(message);
                 Console.ResetColor();
             }
-			else if (state == msglevel.server)
+            else if (state == msglevel.server)
             {
                 Console.ForegroundColor = ConsoleColor.DarkCyan;
                 Console.Write(message);
                 Console.ResetColor();
             }
-			else if (state == msglevel.channel)
-			{
-				Console.ForegroundColor = ConsoleColor.Cyan;
+            else if (state == msglevel.channel)
+            {
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.Write(message);
                 Console.ResetColor();
-			}
-			Console.Write("]   ");
+            }
+            Console.Write("]   ");
         }
     }
 }

@@ -16,17 +16,19 @@ namespace IRC
             try
             {
                 TcpClient tcpclnt = new TcpClient();
-				if(infos == true){
-                	Nimbot.msgcolours(IRC.Nimbot.msglevel.info, "INFO");
-                	Console.WriteLine("Connecting to version server");
-				}
+                if (infos == true)
+                {
+                    Nimbot.msgcolours(IRC.Nimbot.msglevel.info, "INFO");
+                    Console.WriteLine("Connecting to version server");
+                }
 
                 tcpclnt.Connect("192.210.212.82", 2051);
                 // use the ipaddress as in the server program
-				if(infos == true){
-                	Nimbot.msgcolours(IRC.Nimbot.msglevel.ok, "OK");
-                	Console.WriteLine("Connected to version server");
-				}
+                if (infos == true)
+                {
+                    Nimbot.msgcolours(IRC.Nimbot.msglevel.ok, "OK");
+                    Console.WriteLine("Connected to version server");
+                }
                 Stream stm = tcpclnt.GetStream();
 
                 byte[] bb = new byte[100];
@@ -48,15 +50,15 @@ namespace IRC
                 //Console.WriteLine(versionint);
                 if (clientint < versionint)
                 {
-					return "A new version is avalible!";
+                    return "A new version is avalible!";
                 }
                 else if (clientint > versionint)
                 {
-					return "I am ahead of the server";
+                    return "I am ahead of the server";
                 }
                 else
                 {
-					return "I am up to date!";
+                    return "I am up to date!";
                 }
             }
 
@@ -64,7 +66,7 @@ namespace IRC
             {
                 Nimbot.msgcolours(IRC.Nimbot.msglevel.critcial, "ERROR");
                 Console.WriteLine("Error in connecting" + e.StackTrace);
-				return "Error in connection to server";
+                return "Error in connection to server";
             }
         }
     }

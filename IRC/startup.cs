@@ -49,10 +49,10 @@ namespace IRC
             Console.WriteLine("                      Ver: {0} written by Nimphina", version);
             Console.WriteLine("                 This bot may or may not have super cow powers");
             Console.WriteLine("");
-           // Console.WriteLine("---------------------------------------------------------------------------------");
+            // Console.WriteLine("---------------------------------------------------------------------------------");
             Console.ResetColor();
-			Nimbot.msgcolours (Nimbot.msglevel.info, "INFO");
-			Console.WriteLine (versionchk.checker(Nimbot.version, false));
+            Nimbot.msgcolours(Nimbot.msglevel.info, "INFO");
+            Console.WriteLine(versionchk.checker(Nimbot.version, false));
 
         }
         public static void stage2(out string server, out int port, out string rootchannel, out string botname, out string botop, out string opsymbol, out string logging)
