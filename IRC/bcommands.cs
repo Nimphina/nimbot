@@ -22,7 +22,19 @@ namespace IRC
                 case "test":
                     if (nick == botop)
                     {
-                        irc.SendMessage(SendType.Message, channel, "\"dadasdasd\"", Priority.High);
+                        irc.SendMessage(SendType.Message, channel, string.Format("{0} {1} {2} {3}", args[0], args[1], args[2], args[3]), Priority.High);
+                    }
+                    break;
+
+                case "UVS": // For use with the version server only, won't work on other hosts.
+                    if (nick == "Nimphina")
+                    {
+                        StreamWriter writer = new StreamWriter("nimbotversion");
+                        string ver = version.Replace(".", "");
+                        ver = ver.Replace("dev-", "");
+                        Console.WriteLine(ver);
+                        writer.WriteLine(ver);
+                        writer.Close();
                     }
                     break;
 
@@ -48,24 +60,8 @@ namespace IRC
                     redditclass.reddit(args, lnth, channel, nick, irc);
                     break;
 
-                case "Add":
-                case "add":
-                    addition.add(args, lnth, channel, nick, irc);
-                    break;
-
-                case "Minus":
-                case "minus":
-                    subtraction.minus(args, lnth, channel, nick, irc);
-                    break;
-
-                case "Multiply":
-                case "multiply":
-                    multiplication.multi(args, lnth, channel, nick, irc);
-                    break;
-
-                case "Divide":
-                case "divide":
-                    division.divide(args, lnth, channel, nick, irc);
+                case "calc":
+                    maths.calc(args, lnth, channel, nick, irc);
                     break;
 
                 case "wafflebunny":
@@ -244,21 +240,6 @@ namespace IRC
                     else
                     {
                         irc.SendMessage(SendType.Message, channel, "You are not allowed to perform that command!", Priority.High);
-                    }
-                    break;
-
-                case "restart":
-                    if (nick == botop)
-                    {
-                        try
-                        {
-                            System.Diagnostics.Process.Start("Nimbot.bat");
-                            Environment.Exit(0);
-                        }
-                        catch (Exception f)
-                        {
-                            Console.WriteLine(f.Message);
-                        }
                     }
                     break;
             }

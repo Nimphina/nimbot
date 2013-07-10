@@ -49,14 +49,11 @@
     <Compile Include="commands\bunny.cs" />
     <Compile Include="commands\google.cs" />
     <Compile Include="commands\join.cs" />
+    <Compile Include="commands\maths.cs" />
     <Compile Include="commands\opitems.cs" />
     <Compile Include="commands\quotes.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="commands\addition.cs" />
-    <Compile Include="commands\division.cs" />
-    <Compile Include="commands\subtraction.cs" />
-    <Compile Include="commands\multiplication.cs" />
     <Compile Include="commands\u.cs" />
     <Compile Include="commands\reddit.cs" />
     <Compile Include="startup.cs" />
