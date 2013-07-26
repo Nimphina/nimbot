@@ -10,14 +10,17 @@ namespace IRC
     class Nimbot
     {
         public static IrcClient irc = new IrcClient();
-        public string server;
-        public int port;
+        public static string server;
+        public static int port;
         public static string rootchannel;
         public static string botop;
         public static string botname;
-        public static string version = "dev-1.1.18";
+        public static string pass;
+        public static string version = "dev-1.1.19";
         public static string opsymbol;
         public static string logging;
+        public static bool debug = false;
+        private static string server_name = "";
         public static DateTime StartTime = DateTime.Now;
 
         public static void Main()
@@ -31,7 +34,7 @@ namespace IRC
         {
 
             startup.stage1(version);
-            startup.stage2(out server, out port, out rootchannel, out botname, out botop, out opsymbol, out logging);
+            startup.stage2(out server, out port, out rootchannel, out botname, out pass, out botop, out opsymbol, out logging);
 
             irc.Encoding = System.Text.Encoding.UTF8;
             irc.ActiveChannelSyncing = true;
@@ -40,7 +43,7 @@ namespace IRC
             irc.AutoRetryDelay = 10;
             irc.AutoRelogin = true;
             irc.AutoJoinOnInvite = true;
-            irc.CtcpVersion = "Nimbot " + version;
+            irc.CtcpVersion = "Nimbot";
             irc.SendDelay = 300;
 
             //Setting some eventhandlers
@@ -77,19 +80,15 @@ namespace IRC
 
         void OnConnecting(object sender, EventArgs e)
         {
+            Console.Title = "Nimbot " + version + " - Connecting";
             msgcolours(msglevel.info, "INFO");
-            Console.WriteLine("Attempting to connect to {0} on {1}.", server, port);
+            Console.WriteLine("Attempting to connect to {0} on port {1}.", server, port);
         }
 
         void OnConnected(object sender, EventArgs e)
         {
-            msgcolours(msglevel.ok, "OK");
-            Console.WriteLine("Successfully connected to {0} on port {1}.", server, port);
-
             irc.Login(botname, botname, 0, string.Format("{0}-bot", botname));
 
-            msgcolours(msglevel.info, "INFO");
-            Console.WriteLine("Joining rootchannel {0}.", rootchannel);
             irc.RfcJoin(rootchannel);
 
             try
@@ -103,6 +102,7 @@ namespace IRC
                     chanarraylnth++;
                 }
                 chanlistcheck.Close();
+
                 string[] channel_list = new string[chanarraylnth];
 
                 StreamReader chanreader = new StreamReader("channel.list");
@@ -120,8 +120,6 @@ namespace IRC
 
                 foreach (string value in channel_list)
                 {
-                    msgcolours(msglevel.info, "INFO");
-                    Console.WriteLine("Joining {0}.", channel_list[i]);
                     irc.RfcJoin(channel_list[i]);
                     i++;
                 }
@@ -134,8 +132,7 @@ namespace IRC
             }
             finally
             {
-                msgcolours(msglevel.ok, "OK");
-                Console.WriteLine("All channels joined successfully.");
+                irc.SendMessage(SendType.Message, "NickServ", string.Format("identify {0} {1}", botname, pass), Priority.High);
 
                 if (logging == "enabled")
                 {
@@ -145,12 +142,10 @@ namespace IRC
                     Console.ResetColor();
                 }
 
-                Console.WriteLine("");
-
             }
             irc.Listen(true);
         }
-
+        //Method to handle the commands but not console messages except for chat
         public void OnChannelMessage(object sender, IrcEventArgs e)
         {
             string channel = e.Data.Channel;
@@ -183,20 +178,11 @@ namespace IRC
                 irc.SendMessage(SendType.Message, channel, "Quoted!", Priority.High);
             }
 
-            else if (nick == "Ralph")
-            {
-                irc.SendMessage(SendType.Message, channel, "I hate Ralph and he hates me", Priority.High);
-                Console.WriteLine("RALPH SAID SHIT");
-            }
-
-            else if (message == "What is love?")
-            {
-                irc.SendMessage(SendType.Message, channel, "Baby don't hurt me", Priority.High);
-            }
-
             else if (message.ToLower() == "beep boop")
             {
                 irc.SendMessage(SendType.Message, channel, "imma robot", Priority.High);
+                irc.SendMessage(SendType.Action, channel, "Dances", Priority.High);
+
             }
 
             else if (message.ToLower() == "hello" || message.ToLower() == "hi")
@@ -212,10 +198,12 @@ namespace IRC
 
         void OnDisconnected(object sender, EventArgs e)
         {
+            Console.Title = "Nimbot " + version + " - Disconnected";
             msgcolours(msglevel.critcial, "ERROR");
             Console.WriteLine("Disconnected from server.");
         }
 
+        //Needs to be here for some reason or otherwise it times out.
         void OnPing(object sender, PingEventArgs e)
         {
             //Console.WriteLine("Responded to ping at {0}.", DateTime.Now.ToShortTimeString());
@@ -249,13 +237,43 @@ namespace IRC
 
         public static void OnMessage(object sender, IrcEventArgs e)
         {
+            server_name = e.Data.RawMessageArray[0];
             string channel = e.Data.Channel;
             string nick = e.Data.Nick;
             string message = e.Data.Message;
-            //Console.WriteLine(e.Data.Nick + e.Data.RawMessage);
+
+            if (debug == true)
+            {
+                Console.WriteLine(e.Data.Nick + e.Data.RawMessageArray[1]);
+            }
 
             if (nick == "PING" || string.IsNullOrEmpty(nick) || nick == botname || string.IsNullOrEmpty(message) || message == ":")
             {
+               switch(e.Data.RawMessageArray[1]){
+
+                   case "001":
+                       Console.Title = "Nimbot " + version + " - " + e.Data.RawMessageArray[6];
+                       msgcolours(msglevel.ok, "OK");
+                       Console.WriteLine("Successfully connected to {0} on port {1}.", server, port);
+                       msgcolours(msglevel.server, "SERVER");
+                       Console.WriteLine("Welcome to the {0} IRC network", e.Data.RawMessageArray[6]);
+                       break;
+
+                   case "002":
+                       msgcolours(msglevel.server, "INFO");
+                       Console.WriteLine("Connected to {0}", e.Data.RawMessageArray[0]);
+                       break;
+
+                   case "433":
+                       msgcolours(msglevel.server, "SERVER");
+                       Console.WriteLine("{0} is already in use", e.Data.RawMessageArray[3]);
+                       break;
+
+                   case "JOIN":
+                       msgcolours(msglevel.channel, "CHANNEL");
+                       Console.WriteLine("Joining {0}", e.Data.RawMessageArray[2]);
+                       break;
+               }
             }
             else
             {

@@ -19,8 +19,8 @@ namespace IRC
                 if (infos == true)
                 {
                     Nimbot.msgcolours(IRC.Nimbot.msglevel.info, "INFO");
-                    Console.WriteLine("Connecting to version server");
                 }
+                Console.WriteLine("Connecting to version server");
 
                 tcpclnt.Connect("192.210.212.82", 2051);
                 // use the ipaddress as in the server program
@@ -34,6 +34,7 @@ namespace IRC
                 byte[] bb = new byte[100];
                 int k = stm.Read(bb, 0, 100);
                 string version = "";
+
                 for (int i = 0; i < k; i++)
                 {
                     version = version + Convert.ToChar(bb[i]);
@@ -65,7 +66,7 @@ namespace IRC
             catch (Exception e)
             {
                 Nimbot.msgcolours(IRC.Nimbot.msglevel.critcial, "ERROR");
-                Console.WriteLine("Error in connecting" + e.StackTrace);
+                Console.WriteLine("Error in connecting {0}", e.Message);
                 return "Error in connection to server";
             }
         }

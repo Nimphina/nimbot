@@ -94,6 +94,7 @@ namespace IRC
                                 }
                                 break;
 
+                            case "^":
                             case "**":
                                 if (first_calc == true)
                                 {

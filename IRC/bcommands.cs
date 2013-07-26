@@ -15,7 +15,7 @@ namespace IRC
 
             string[] args = message.TrimEnd().Split(' ');
             int lnth = args.Length;
-            string command_check = args[0];
+            string command_check = args[0].ToLower();
 
             switch (command_check)
             {
@@ -26,7 +26,7 @@ namespace IRC
                     }
                     break;
 
-                case "UVS": // For use with the version server only, won't work on other hosts.
+                case "uvs": // For use with the version server only, won't work on other hosts.
                     if (nick == "Nimphina")
                     {
                         StreamWriter writer = new StreamWriter("nimbotversion");
@@ -40,9 +40,16 @@ namespace IRC
 
                 case "g":
                 case "google":
-                    message = message.Replace(args[0], "");
-                    message = message.TrimStart(new char[] { ' ' });
-                    google.search(message, channel, nick, irc);
+                    if (lnth > 1)
+                    {
+                        message = message.Replace(args[0], "");
+                        message = message.TrimStart(new char[] { ' ' });
+                        google.search(message, channel, nick, irc);
+                    }
+                    else
+                    {
+                        irc.SendMessage(SendType.Message, channel, "Google: Takes your query and searches Google with it, displays two results.", Priority.High);
+                    }
                     break;
 
                 case "help":
@@ -50,18 +57,36 @@ namespace IRC
                     irc.SendMessage(SendType.Message, channel, "u, reddit, add, subtract, minus, multiply, divide, wafflebunny, ping, info, version, join, part, uptime, say", Priority.High);
                     break;
 
-                case "U":
                 case "u":
-                    u.umcf(args, lnth, channel, nick, irc);
+                    if (lnth > 1)
+                    {
+                        u.umcf(args, lnth, channel, nick, irc);
+                    }
+                    else
+                    {
+                        irc.SendMessage(SendType.Message, channel, "u.mcf.li for lazy people. List of options: [profile, posts, topics, warnings, videos, friends, pm, names, admin, edit, modcp, validate, warn, suspend, iphistory]", Priority.High);
+                    }
                     break;
 
-                case "Reddit":
                 case "reddit":
+                    if (lnth > 1){
                     redditclass.reddit(args, lnth, channel, nick, irc);
+                    }
+                    else
+                    {
+                        irc.SendMessage(SendType.Message, channel, "reddit for lazy people. Format: u <user> or r <subreddit>", Priority.High);
+                    }
                     break;
-
+                
                 case "calc":
-                    maths.calc(args, lnth, channel, nick, irc);
+                    if (lnth > 1)
+                    {
+                        maths.calc(args, lnth, channel, nick, irc);
+                    }
+                    else
+                    {
+                        irc.SendMessage(SendType.Message, channel, "Options are: [+ - * / % **/^ ]", Priority.High);
+                    }
                     break;
 
                 case "wafflebunny":
@@ -78,10 +103,7 @@ namespace IRC
                     break;
 
                 //All hardcoded, non class commands
-                case "Ping":
                 case "ping":
-                    Nimbot.msgcolours(IRC.Nimbot.msglevel.info, "INFO");
-                    Console.WriteLine("ping command");
                     irc.SendMessage(SendType.Message, channel, "pong", Priority.High);
                     break;
 
@@ -131,7 +153,6 @@ namespace IRC
                     }
                     break;
 
-                case "Hello":
                 case "hello":
                 case "hi":
                     irc.SendMessage(SendType.Message, channel, "Hello, " + nick, Priority.High);
@@ -241,6 +262,9 @@ namespace IRC
                     {
                         irc.SendMessage(SendType.Message, channel, "You are not allowed to perform that command!", Priority.High);
                     }
+                    break;
+                default:
+                    irc.SendMessage(SendType.Message, channel, "Grumble", Priority.High);
                     break;
             }
         }

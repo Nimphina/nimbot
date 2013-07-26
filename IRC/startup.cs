@@ -55,7 +55,7 @@ namespace IRC
             Console.WriteLine(versionchk.checker(Nimbot.version, false));
 
         }
-        public static void stage2(out string server, out int port, out string rootchannel, out string botname, out string botop, out string opsymbol, out string logging)
+        public static void stage2(out string server, out int port, out string rootchannel, out string botname, out string pass, out string botop, out string opsymbol, out string logging)
         {
             try
             {
@@ -81,6 +81,9 @@ namespace IRC
 
                 reader.ReadLine(); //get botname
                 botname = reader.ReadLine();
+
+                reader.ReadLine(); //get botname
+                pass = reader.ReadLine();
 
                 reader.ReadLine(); //get botop
                 botop = reader.ReadLine();
@@ -116,6 +119,11 @@ namespace IRC
             Console.WriteLine("What is the bot's nick?");
             writestring = Console.ReadLine();
             writer.WriteLine("Bot nick:");
+            writer.WriteLine(writestring);
+
+            Console.WriteLine("What is the bot's nickserv password?");
+            writestring = Console.ReadLine();
+            writer.WriteLine("Password:");
             writer.WriteLine(writestring);
 
             Console.WriteLine("Who is the bot operator?");
