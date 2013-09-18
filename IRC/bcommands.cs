@@ -26,18 +26,6 @@ namespace IRC
                     }
                     break;
 
-                case "uvs": // For use with the version server only, won't work on other hosts.
-                    if (nick == "Nimphina")
-                    {
-                        StreamWriter writer = new StreamWriter("nimbotversion");
-                        string ver = version.Replace(".", "");
-                        ver = ver.Replace("dev-", "");
-                        Console.WriteLine(ver);
-                        writer.WriteLine(ver);
-                        writer.Close();
-                    }
-                    break;
-
                 case "g":
                 case "google":
                     if (lnth > 1)
@@ -98,10 +86,6 @@ namespace IRC
                     quotes.quotegetter(channel, irc);
                     break;
 
-                case "versioncheck":
-                    irc.SendMessage(SendType.Message, channel, string.Format(versionchk.checker(version, true)), Priority.High);
-                    break;
-
                 //All hardcoded, non class commands
                 case "ping":
                     irc.SendMessage(SendType.Message, channel, "pong", Priority.High);
@@ -135,6 +119,8 @@ namespace IRC
 
                 case "q":
                 case "quit":
+				case "fuck off":
+				case "get lost":
                     if (nick == botop)
                     {
                         Nimbot.msgcolours(IRC.Nimbot.msglevel.critcial, "CRITICAL");
@@ -211,8 +197,16 @@ namespace IRC
                     }
                     break;
 
-                case "serverinfo":
-                    irc.SendMessage(SendType.Message, channel, string.Format("Hostname: {0} OS: {1}, LocalTime: {2}", Environment.MachineName, Environment.OSVersion, DateTime.Now));
+				case "serverinfo":
+				string os_version = Environment.OSVersion.ToString();
+				if (Environment.OSVersion.Platform.ToString().Contains ("Unix"))
+				{
+					if (Environment.OSVersion.ToString().Contains("3.") || Environment.OSVersion.ToString().Contains("2."))
+					{
+						os_version = Environment.OSVersion.ToString ().Replace("Unix", "Linux");
+					}
+				}
+				irc.SendMessage(SendType.Message, channel, string.Format("Hostname: {0} OS: {1}, LocalTime: {2}", Environment.MachineName, os_version, DateTime.Now));
                     break;
 
                 //Bot op only commands
@@ -262,9 +256,6 @@ namespace IRC
                     {
                         irc.SendMessage(SendType.Message, channel, "You are not allowed to perform that command!", Priority.High);
                     }
-                    break;
-                default:
-                    irc.SendMessage(SendType.Message, channel, "Grumble", Priority.High);
                     break;
             }
         }

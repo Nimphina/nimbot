@@ -51,8 +51,6 @@ namespace IRC
             Console.WriteLine("");
             // Console.WriteLine("---------------------------------------------------------------------------------");
             Console.ResetColor();
-            Nimbot.msgcolours(Nimbot.msglevel.info, "INFO");
-            Console.WriteLine(versionchk.checker(Nimbot.version, false));
 
         }
         public static void stage2(out string server, out int port, out string rootchannel, out string botname, out string pass, out string botop, out string opsymbol, out string logging)

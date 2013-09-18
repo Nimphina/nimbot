@@ -31,17 +31,15 @@
     <Externalconsole>true</Externalconsole>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="GoogleSearchAPI, Version=0.4.0.133, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>libs\GoogleSearchAPI.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=3.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>libs\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="Meebey.SmartIrc4net">
       <HintPath>libs\Meebey.SmartIrc4net.dll</HintPath>
+    </Reference>
+    <Reference Include="GoogleSearchAPI">
+      <HintPath>libs\GoogleSearchAPI.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>libs\Newtonsoft.Json.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -58,7 +56,6 @@
     <Compile Include="commands\reddit.cs" />
     <Compile Include="startup.cs" />
     <Compile Include="commands\part.cs" />
-    <Compile Include="commands\versionchk.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

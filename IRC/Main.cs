@@ -16,11 +16,11 @@ namespace IRC
         public static string botop;
         public static string botname;
         public static string pass;
-        public static string version = "dev-1.1.19";
+        public static string version = "dev-1.1.20";
         public static string opsymbol;
         public static string logging;
         public static bool debug = false;
-        private static string server_name = "";
+        public static string server_name = "";
         public static DateTime StartTime = DateTime.Now;
 
         public static void Main()
@@ -251,28 +251,30 @@ namespace IRC
             {
                switch(e.Data.RawMessageArray[1]){
 
-                   case "001":
-                       Console.Title = "Nimbot " + version + " - " + e.Data.RawMessageArray[6];
-                       msgcolours(msglevel.ok, "OK");
-                       Console.WriteLine("Successfully connected to {0} on port {1}.", server, port);
-                       msgcolours(msglevel.server, "SERVER");
-                       Console.WriteLine("Welcome to the {0} IRC network", e.Data.RawMessageArray[6]);
-                       break;
+				case "001":
+					Console.Title = "Nimbot " + version + " - " + e.Data.RawMessageArray [6];
+					msgcolours (msglevel.ok, "OK");
+					Console.WriteLine ("Successfully connected to {0} on port {1}.", server, port);
+					msgcolours (msglevel.server, "SERVER");
+					Console.WriteLine ("Welcome to the {0} IRC network", e.Data.RawMessageArray [6]);                          
+					break;
 
-                   case "002":
-                       msgcolours(msglevel.server, "INFO");
-                       Console.WriteLine("Connected to {0}", e.Data.RawMessageArray[0]);
-                       break;
+				case "002":
+					msgcolours (msglevel.server, "INFO");
+					Console.WriteLine ("Connected to {0}", e.Data.RawMessageArray [0]);
+					server_name = e.Data.RawMessageArray [0];
+					Console.WriteLine (server_name);
+					break;
 
-                   case "433":
-                       msgcolours(msglevel.server, "SERVER");
-                       Console.WriteLine("{0} is already in use", e.Data.RawMessageArray[3]);
-                       break;
+				case "433":
+					msgcolours (msglevel.server, "SERVER");
+					Console.WriteLine ("{0} is already in use", e.Data.RawMessageArray [3]);
+					break;
 
-                   case "JOIN":
-                       msgcolours(msglevel.channel, "CHANNEL");
-                       Console.WriteLine("Joining {0}", e.Data.RawMessageArray[2]);
-                       break;
+				case "JOIN":
+					msgcolours (msglevel.channel, "CHANNEL");
+					Console.WriteLine ("Joining {0}", e.Data.RawMessageArray [2]);
+					break;
                }
             }
             else
@@ -413,6 +415,10 @@ namespace IRC
                             string pass = Console.ReadLine();
                             irc.SendMessage(SendType.Message, "NickServ", string.Format("identify {0} {1}", botname, pass), Priority.High);
                             break;
+
+						case "serv":
+							Console.WriteLine (server_name);
+							break;
 
                         default:
                             msgcolours(msglevel.info, "INFO");
