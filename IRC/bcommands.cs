@@ -119,8 +119,6 @@ namespace IRC
 
                 case "q":
                 case "quit":
-				case "fuck off":
-				case "get lost":
                     if (nick == botop)
                     {
                         Nimbot.msgcolours(IRC.Nimbot.msglevel.critcial, "CRITICAL");

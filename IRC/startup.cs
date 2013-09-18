@@ -53,11 +53,11 @@ namespace IRC
             Console.ResetColor();
 
         }
-        public static void stage2(out string server, out int port, out string rootchannel, out string botname, out string pass, out string botop, out string opsymbol, out string logging)
+        public static void stage2(ref string server, ref int port, ref string rootchannel, ref string botname, ref string pass, ref string botop, ref string opsymbol, ref string logging)
         {
             try
             {
-                TextReader reader = new StreamReader("config.conf");
+                TextReader reader = new StreamReader("config");
                 reader.Close();
             }
             catch (FileNotFoundException)
@@ -66,31 +66,73 @@ namespace IRC
             }
             finally
             {
-                TextReader reader = new StreamReader("config.conf");
-                reader.ReadLine(); //skip server title, get server
-                server = reader.ReadLine();
+                StreamReader reader = new StreamReader("config");
+                int counter = 0;
+                while (reader.EndOfStream == false)
+                {
+                    string[] work_string = reader.ReadLine().TrimEnd().Split(' ');;
+                    //Console.WriteLine(work_string[0].ToLower().TrimEnd(new Char[] { ':' }) + work_string[1]);
 
-                reader.ReadLine(); //get port
-                string portstring = reader.ReadLine();
-                port = int.Parse(portstring);
+                    switch(work_string[0].ToLower().TrimEnd(new Char[]{':'})){
 
-                reader.ReadLine(); //get root channel
-                rootchannel = reader.ReadLine();
+                        case "server":
+                            server = work_string[1];
+                            break;
 
-                reader.ReadLine(); //get botname
-                botname = reader.ReadLine();
+                        case "port":
+                            try
+                            {
+                                port = int.Parse(work_string[1]);
+                                counter++;
+                            }
+                            catch (FormatException)
+                            {
+                                Console.WriteLine("Port is not a integer!");
+                                Console.ReadLine();
+                                Environment.Exit(0);
+                            }
+                            break;
 
-                reader.ReadLine(); //get botname
-                pass = reader.ReadLine();
+                        case "rootchannel":
+                            rootchannel = work_string[1];
+                            counter++;
+                            break;
 
-                reader.ReadLine(); //get botop
-                botop = reader.ReadLine();
+                        case "botname":
+                        case "botnick":
+                            botname = work_string[1];
+                            counter++;
+                            break;
 
-                reader.ReadLine(); //get opsymbol
-                opsymbol = reader.ReadLine();
+                        case "password":
+                        case "pass":
+                            pass = work_string[1];
+                            counter++;
+                            break;
 
-                reader.ReadLine(); //get opsymbol
-                logging = reader.ReadLine();
+                        case "botop":
+                        case "operator":
+                            botop = work_string[1];
+                            counter++;
+                            break;
+
+                        case "opsymbol":
+                        case "commandchar":
+                            opsymbol = work_string[1];
+                            counter++;
+                            break;
+
+                        case "logging":
+                            logging = work_string[1];
+                            counter++;
+                            break;
+
+                        default:
+                            Console.WriteLine("Switch has defaulted");
+                            break;
+                    }
+                }
+               
                 reader.Close();
             }
         }
@@ -98,44 +140,38 @@ namespace IRC
         {
             Console.WriteLine("Configuration file not found: Creating a blank config file.");
 
-            StreamWriter writer = new StreamWriter("config.conf");
-            writer.WriteLine("Server:");
+            StreamWriter writer = new StreamWriter("config");
+            
             Console.WriteLine("What server are you connecting to?");
             string writestring = Console.ReadLine();
-            writer.WriteLine(writestring);
+            writer.WriteLine("Server: " + writestring);
 
             Console.WriteLine("What port are you connecting to?");
             writestring = Console.ReadLine();
-            writer.WriteLine("Port:");
-            writer.WriteLine(writestring);
+            writer.WriteLine("Port: " + writestring);
 
             Console.WriteLine("What is the root channel?");
             writestring = Console.ReadLine();
-            writer.WriteLine("Root channel:");
-            writer.WriteLine(writestring);
+            writer.WriteLine("Rootchannel: " + writestring);
 
             Console.WriteLine("What is the bot's nick?");
             writestring = Console.ReadLine();
-            writer.WriteLine("Bot nick:");
-            writer.WriteLine(writestring);
+            writer.WriteLine("Botname: " + writestring);
 
             Console.WriteLine("What is the bot's nickserv password?");
             writestring = Console.ReadLine();
-            writer.WriteLine("Password:");
-            writer.WriteLine(writestring);
+            writer.WriteLine("Password: " + writestring);
 
             Console.WriteLine("Who is the bot operator?");
             writestring = Console.ReadLine();
-            writer.WriteLine("Botop:");
-            writer.WriteLine(writestring);
+            writer.WriteLine("Botop: " + writestring);
 
             Console.WriteLine("What is the command char?");
             writestring = Console.ReadLine();
-            writer.WriteLine("Command char:");
-            writer.WriteLine(writestring);
+            writer.WriteLine("Opsymbol: " + writestring);
 
-            writer.WriteLine("Logging:");
-            writer.WriteLine("disabled");
+            writer.WriteLine("Logging: Disabled");
+
             writer.Close();
         }
     }

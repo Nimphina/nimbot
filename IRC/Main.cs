@@ -34,7 +34,7 @@ namespace IRC
         {
 
             startup.stage1(version);
-            startup.stage2(out server, out port, out rootchannel, out botname, out pass, out botop, out opsymbol, out logging);
+            startup.stage2(ref server, ref port, ref rootchannel, ref botname, ref pass, ref botop, ref opsymbol, ref logging);
 
             irc.Encoding = System.Text.Encoding.UTF8;
             irc.ActiveChannelSyncing = true;
@@ -263,7 +263,6 @@ namespace IRC
 					msgcolours (msglevel.server, "INFO");
 					Console.WriteLine ("Connected to {0}", e.Data.RawMessageArray [0]);
 					server_name = e.Data.RawMessageArray [0];
-					Console.WriteLine (server_name);
 					break;
 
 				case "433":
