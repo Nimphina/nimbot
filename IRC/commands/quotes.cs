@@ -24,7 +24,7 @@ namespace IRC
                     quoter.ReadLine();
                     quote_ammount++;
                 }
-                int random = rand.Next(1, quote_ammount); 
+                int random = rand.Next(1, quote_ammount + 1); 
                 quoter.Close();
                 StreamReader quotereader = new StreamReader("quotes");
                 for (int i = 0; i < random; i++)

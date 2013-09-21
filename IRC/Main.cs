@@ -153,7 +153,7 @@ namespace IRC
             string nick = e.Data.Nick;
             string bn = botname.ToLower(); // So that the how are you thing would work
             Random rand = new Random();
-            int random = rand.Next(1, 70);
+            int random = rand.Next(1, 200);
 
             if (logging == "enabled")
             {

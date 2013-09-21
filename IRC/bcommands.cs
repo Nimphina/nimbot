@@ -196,14 +196,26 @@ namespace IRC
                     break;
 
 				case "serverinfo":
+                    //super long if statment!
 				string os_version = Environment.OSVersion.ToString();
-				if (Environment.OSVersion.Platform.ToString().Contains ("Unix"))
+
+                if (Environment.OSVersion.ToString().Contains("Unix") && Environment.OSVersion.ToString().Contains("3.") || Environment.OSVersion.ToString().Contains("Unix") && Environment.OSVersion.ToString().Contains("2."))
 				{
-					if (Environment.OSVersion.ToString().Contains("3.") || Environment.OSVersion.ToString().Contains("2."))
-					{
-						os_version = Environment.OSVersion.ToString ().Replace("Unix", "Linux");
-					}
+					os_version = Environment.OSVersion.ToString ().Replace("Unix", "Linux");
 				}
+                else if (Environment.OSVersion.ToString().Contains(" Windows NT") && Environment.OSVersion.ToString().Contains("6.3"))
+                {
+                    os_version = Environment.OSVersion.ToString().Replace("NT", "8");
+                }
+                else if (Environment.OSVersion.ToString().Contains(" Windows NT") && Environment.OSVersion.ToString().Contains("6.1"))
+                {
+                    os_version = Environment.OSVersion.ToString().Replace("NT", "7");
+                }
+                else if (Environment.OSVersion.ToString().Contains(" Windows NT") && Environment.OSVersion.ToString().Contains("5.1"))
+                {
+                    os_version = Environment.OSVersion.ToString().Replace("NT", "XP");
+                }
+				
 				irc.SendMessage(SendType.Message, channel, string.Format("Hostname: {0} OS: {1}, LocalTime: {2}", Environment.MachineName, os_version, DateTime.Now));
                     break;
 
