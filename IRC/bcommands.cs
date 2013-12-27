@@ -22,7 +22,7 @@ namespace IRC
                 case "test":
                     if (nick == botop)
                     {
-                        irc.SendMessage(SendType.Message, channel, string.Format("{0} {1} {2} {3}", args[0], args[1], args[2], args[3]), Priority.High);
+                        //irc.SendMessage(SendType.Message, channel, string.Format("{0} {1} {2} {3}", args[0], args[1], args[2], args[3]), Priority.High);
                     }
                     break;
 
@@ -203,7 +203,7 @@ namespace IRC
 				{
 					os_version = Environment.OSVersion.ToString ().Replace("Unix", "Linux");
 				}
-                else if (Environment.OSVersion.ToString().Contains(" Windows NT") && Environment.OSVersion.ToString().Contains("6.3"))
+                else if (Environment.OSVersion.ToString().Contains(" Windows NT") && Environment.OSVersion.ToString().Contains("6.2"))
                 {
                     os_version = Environment.OSVersion.ToString().Replace("NT", "8");
                 }

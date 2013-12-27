@@ -5,10 +5,20 @@ using System.Collections.Generic;
 using System.Text;
 using Meebey.SmartIrc4net;
 
+/*Changelog (starting ver dev 1.1.21)
+ * dev-1.1.21:
+ * Commented the code a lot more, added changelog.
+ * 
+ * Todo:
+ * Improve configuration method
+ * 
+ */
+
 namespace IRC
 {
     class Nimbot
     {
+        //Set public 
         public static IrcClient irc = new IrcClient();
         public static string server;
         public static int port;
@@ -16,7 +26,7 @@ namespace IRC
         public static string botop;
         public static string botname;
         public static string pass;
-        public static string version = "dev-1.1.20";
+        public static string version = "dev-1.1.21";
         public static string opsymbol;
         public static string logging;
         public static bool debug = false;
@@ -36,6 +46,7 @@ namespace IRC
             startup.stage1(version);
             startup.stage2(ref server, ref port, ref rootchannel, ref botname, ref pass, ref botop, ref opsymbol, ref logging);
 
+            //Set irc library related options
             irc.Encoding = System.Text.Encoding.UTF8;
             irc.ActiveChannelSyncing = true;
             irc.AutoReconnect = true;
@@ -59,25 +70,29 @@ namespace IRC
             irc.OnBan += new BanEventHandler(OnBan);
             irc.OnTopicChange += new TopicChangeEventHandler(OnTopicChange);
 
+            //Star threads for commandline interface
             ThreadStart commandlinethread = new ThreadStart(cmd);
-            Thread t1 = new Thread(commandlinethread);
-            t1.Start();
+            Thread t_cli = new Thread(commandlinethread);
+            t_cli.Start();
 
             try
             {
-                irc.Connect(server, port);
+                irc.Connect(server, port); //Attempt connection to IRC server
             }
-            catch (Exception e)
+            catch (ConnectionException)
             {
-                t1.Abort();
+                //If there is a failure to connect, the client SHOULD kill the cli thread, print error and then wait for user input before quitting. 
+                t_cli.Abort();
                 msgcolours(msglevel.critcial, "ERROR");
-                Console.Write("Failed to connect: " + e.Message);
+                Console.WriteLine("Failed to connect:");
 
+                Console.WriteLine("Press any key to continue.");
                 Console.ReadKey();
             }
-            t1.Abort();
+            t_cli.Abort();
         }
 
+        //Handler method for when connecting to the server
         void OnConnecting(object sender, EventArgs e)
         {
             Console.Title = "Nimbot " + version + " - Connecting";
@@ -85,11 +100,12 @@ namespace IRC
             Console.WriteLine("Attempting to connect to {0} on port {1}.", server, port);
         }
 
+        //Handler method for when connected, deals with sending IRC server nick
         void OnConnected(object sender, EventArgs e)
         {
-            irc.Login(botname, botname, 0, string.Format("{0}-bot", botname));
+            irc.Login(botname, botname, 0, string.Format("{0}-bot", botname)); //Send bot details
 
-            irc.RfcJoin(rootchannel);
+            irc.RfcJoin(rootchannel); //Join the root channel specified
 
             try
             {
@@ -127,7 +143,7 @@ namespace IRC
             }
             catch (FileNotFoundException)
             {
-                StreamWriter writer = new StreamWriter("channel.list");
+                StreamWriter writer = new StreamWriter("channel.list"); //If the reader fails to find the file, create one.
                 writer.Close();
             }
             finally
@@ -415,9 +431,9 @@ namespace IRC
                             irc.SendMessage(SendType.Message, "NickServ", string.Format("identify {0} {1}", botname, pass), Priority.High);
                             break;
 
-						case "serv":
-							Console.WriteLine (server_name);
-							break;
+			        case "serv":
+			            Console.WriteLine (server_name);
+			            break;
 
                         default:
                             msgcolours(msglevel.info, "INFO");
