@@ -6,12 +6,18 @@ using System.Text;
 using Meebey.SmartIrc4net;
 
 /*Changelog (starting ver dev 1.1.21)
+ * dev-2.0.0:
+ * Complete re-write of main functions.
+ * Improved configuration
+ * Implemented some basic functionality
+ * Created a new class with some common methods
+ * Added join/part and message commands to bot object
+ * 
  * dev-1.1.21:
  * Commented the code a lot more, added changelog.
  * 
  * Todo:
- * Improve configuration method
- * 
+ * Fix some stablity issues regarding the configuration and add proper exception handling 
  */
 
 namespace IRC
@@ -20,15 +26,8 @@ namespace IRC
     {
         //Set object variables
         private static IrcClient irc = new IrcClient();
-        private static string server;
-        public static int port;
-        public static string rootchannel;
-        public static string botop;
-        public static string botname;
-        public static string pass;
+        public static Dictionary<string, string> config_options = bottools.configparser("config", "server port rootchannel botoperator nick nspassword commandchar logging");
         public static string version = "dev-2.0.0";
-        public static string opsymbol;
-        public static string logging;
         public static bool debug = false;
         public static string server_name = "";
         public static DateTime StartTime = DateTime.Now;
@@ -68,15 +67,22 @@ namespace IRC
 
             try
             {
-                irc.Connect(server, port); //Attempt connection to IRC server
+                if (config_options.ContainsKey("failed")|| config_options.ContainsKey("created"))
+                {
+                    Console.WriteLine("Panic");
+                }
+                else
+                {
+                    irc.Connect(config_options["server"], int.Parse(config_options["port"])); //Attempt connection to IRC server
+                }
             }
             catch (ConnectionException)
             {
                 //If there is a failure to connect, the client SHOULD kill the cli thread, print error and then wait for user input before quitting. 
                 t_cli.Abort();
-                consolemsg(msglevel.critcial, "ERROR", "Failed to connect:");
+                bottools.consolemsg(bottools.msglevel.critcial, "ERROR", "Failed to connect:");
 
-                consolemsg(msglevel.info, "AWINPUT", "Press any key to continue.");
+                bottools.consolemsg(bottools.msglevel.info, "AWINPUT", "Press any key to continue.");
                 Console.ReadKey();
             }
             t_cli.Abort();
@@ -85,17 +91,48 @@ namespace IRC
 
         private void OnConnecting(object sender, EventArgs e)
         {
-
+            Console.Title = "Nimbot - Connecting";
+            startup.stage1(version);
+            bottools.consolemsg(bottools.msglevel.info, string.Format("Attempting to connect to {0}", config_options["server"]), "INFO");
         }
 
         private void OnConnected(object sender, EventArgs e)
         {
+            Console.Title = "Nimbot - Connected";
+            bottools.consolemsg(bottools.msglevel.ok, string.Format("Connected to {0}", config_options["server"]), "OK");
 
+            irc.Login(config_options["nick"],config_options["nick"], 0, config_options["nick"] + "-bot");
+            irc.RfcJoin(config_options["rootchannel"]);
+
+            try //Load the channel list
+            {
+                StreamReader channelloader = new StreamReader("channel.list");
+
+                while (channelloader.EndOfStream == false)
+                {
+                    irc.RfcJoin(channelloader.ReadLine());
+                }
+                channelloader.Close();
+            }
+            catch (FileNotFoundException)
+            {
+                bottools.consolemsg(bottools.msglevel.critcial, "Channel list not found.", "ERROR");
+            }
+            finally
+            {
+                //Identify
+                botmsg(string.Format("identify {0} {1}", config_options["nick"], config_options["nspassword"]), "Nickserv");
+            }
+            irc.Listen(true);
         }
 
         private void OnChannelMessage(object sender, IrcEventArgs e)
         {
-
+            bottools.consolemsg(bottools.msglevel.channel, e.Data.Message, "MESSAGE"); 
+            if (e.Data.Message == "hello")
+            {
+                Nimbot.botmsg("Hi", e.Data.Channel);
+            }
         }
 
         private void OnDisconnected(object sender, EventArgs e)
@@ -105,7 +142,7 @@ namespace IRC
 
         private void OnPing(object sender, PingEventArgs e)
         {
-
+            //Stay with us
         }
 
         private void OnQueryMessage(object sender, IrcEventArgs e)
@@ -115,7 +152,7 @@ namespace IRC
 
         private void OnMessage(object sender, IrcEventArgs e)
         {
-
+            bottools.consolemsg(bottools.msglevel.server, e.Data.Message, "SERVER");  //temp
         }
 
         private void OnBan(object sender, BanEventArgs e)
@@ -136,70 +173,79 @@ namespace IRC
         {
 
         }
+        //Bot specific methods
+
+        public static void botmsg(string message, string channel)
+        {
+            bottools.consolemsg(bottools.msglevel.message, message, "BOTMSG");
+            irc.SendMessage(SendType.Message, channel, message);
+        }
+
+        //Handle joining channels and adding them to the channel file
+        public static void channeljoin(string channel)
+        {
+
+            string line;
+            bool write = true;
+
+            using (System.IO.StreamReader file = new System.IO.StreamReader("channel.list"))
+            {
+                while ((line = file.ReadLine()) != null)
+                {
+                    if (line.Contains(channel))
+                    {
+                        write = false;
+                    }
+                }
+            }
+            if (write)
+            {
+                StreamWriter writer = new StreamWriter("channel.list", true);
+                bottools.consolemsg(bottools.msglevel.info, string.Format("Adding {0} to channel list", channel), "INFO");
+                writer.WriteLine(channel);
+                writer.Close();
+            }
+            else
+            {
+                bottools.consolemsg(bottools.msglevel.info, string.Format("{0} is already in the channel list", channel), "INFO");
+            }
+            irc.RfcJoin(channel);
+        }
+
+        //Handle leaving channels and removing them from the list
+        public static void channelremove(string channel, string leaving_message, IrcClient irc)
+        {
+           
+            System.IO.File.Copy("channel.list", "channel.tmp", true);
+            StreamWriter writer = new StreamWriter("channel.list");
+            StreamReader reader = new StreamReader("channel.tmp");
+            string readchan;
+            while (reader.EndOfStream == false)
+            {
+                readchan = reader.ReadLine();
+                readchan = readchan.TrimEnd(' ');
+                if (readchan == channel)
+                {
+                    //write nothing \o/
+                    bottools.consolemsg(bottools.msglevel.info, string.Format("Removing {0} from channel list", channel), "INFO");
+                }
+                else
+                {
+                    writer.WriteLine(readchan);
+                }
+            }
+            writer.Close();
+            reader.Close();
+            System.IO.File.Delete("channel.tmp");
+
+            irc.RfcPart(channel, leaving_message);
+        }
 
         private static void cmd()
         {
 
         }
 
-        public enum msglevel
-        {
-            ok,
-            warning,
-            critcial,
-            info,
-            message,
-            server,
-            channel
-        }
-        public static void consolemsg(msglevel state, string message, string alertmsg)
-        {
-            Console.Write("[");
-            if (state == msglevel.ok)
-            {
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.Write(alertmsg);
-                Console.ResetColor();
-            }
-            else if (state == msglevel.warning)
-            {
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.Write(alertmsg);
-                Console.ResetColor();
-            }
-            else if (state == msglevel.critcial)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.Write(alertmsg);
-                Console.ResetColor();
-            }
-            else if (state == msglevel.info)
-            {
-                Console.ForegroundColor = ConsoleColor.Blue;
-                Console.Write(alertmsg);
-                Console.ResetColor();
-            }
-            else if (state == msglevel.message)
-            {
-                Console.ForegroundColor = ConsoleColor.DarkRed;
-                Console.Write(alertmsg);
-                Console.ResetColor();
-            }
-            else if (state == msglevel.server)
-            {
-                Console.ForegroundColor = ConsoleColor.DarkCyan;
-                Console.Write(alertmsg);
-                Console.ResetColor();
-            }
-            else if (state == msglevel.channel)
-            {
-                Console.ForegroundColor = ConsoleColor.Cyan;
-                Console.Write(alertmsg);
-                Console.ResetColor();
-            }
-            Console.Write("]   ");
-            Console.WriteLine(message);
-        }
     }
 
     class main
@@ -209,6 +255,7 @@ namespace IRC
             Console.Title = "Nimbot";
             
             Nimbot bot = new Nimbot();
+            Console.ReadLine();
         }
     }
 }

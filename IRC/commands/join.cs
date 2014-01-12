@@ -8,7 +8,7 @@ namespace IRC
 {
     class join
     {
-        public static void channeladd(string channel, IrcClient irc)
+        public static void channeljoin(string channel, IrcClient irc)
         {
 
             string line;
