@@ -21,6 +21,7 @@ channel.list
 # Build results
 [Dd]ebug/
 [Rr]elease/
+bin/
 x64/
 *_i.c
 *_p.c
