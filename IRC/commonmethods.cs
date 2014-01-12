@@ -67,7 +67,7 @@ namespace IRC
         }
 
         //Config get method, supply a file name and options 
-        public static Dictionary<string, string> configparser(string config_file, string config_opts) //change to string[] later
+        public static Dictionary<string, string> configparser(string config_file, string config_opts) 
         {
             if (File.Exists(config_file))
             {
