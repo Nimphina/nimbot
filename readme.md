@@ -12,7 +12,7 @@ dev-2.0.0:
 - Implemented some basic functionality
 - Created a new class with some common methods
 - Added join/part and message commands to bot object
-- 
+ 
 dev-1.1.21:
 - Commented the code a lot more, added changelog.
   
