@@ -1,10 +1,13 @@
-Nimbot Version 2
+# Nimbot Version 2 
+
+
 Heavily inspired by the vastly superior IRC bot, botler.
+
 Version 2 brings a near-total re-write to clean stuff up.
 
 Status - Very basic functionality and unstable
 
-Changelog:
+### Changelog:
 
 dev-2.0.0:
 - Complete re-write of main functions.
