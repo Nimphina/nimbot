@@ -19,6 +19,14 @@ namespace IRC
         }
         public static void consolemsg(msglevel state, string message, string alertmsg)
         {
+            //Console.WriteLine(alertmsg.Length);
+            if (alertmsg.Length < 5)
+            {
+                for (int i = 1; i <= 5 - alertmsg.Length; i++ )
+                {
+                    alertmsg = alertmsg + "-";
+                }
+            }
             Console.Write("[");
             if (state == msglevel.ok)
             {
@@ -96,7 +104,7 @@ namespace IRC
                         while (configreader.EndOfStream != true)
                         {
                             file_line = configreader.ReadLine(); //Shoud be in "word={option}" format
-                            if (file_line.Contains(word))
+                            if (file_line.Contains(word) && file_line.Contains("{") && file_line.Contains("}"))
                             {
                                 foreach (char letter in file_line)
                                 {
@@ -121,7 +129,7 @@ namespace IRC
                         }
                         if (found == false)
                         {
-                            Console.WriteLine("Option {0} was not found, please enter it now and update the config file accordingly", word);
+                            Console.WriteLine("Option {0} was not found or was in the incorrect format, please enter it now and update the config file accordingly", word);
                             option_data = Console.ReadLine();
                             config_options.Add(word, option_data);
                         }
@@ -132,10 +140,10 @@ namespace IRC
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e.Message);
+                   // Console.WriteLine(e.Message);
                     Dictionary<string, string> failed_config = new Dictionary<string, string>();
 
-                    failed_config.Add("failed", "failed");
+                    failed_config.Add("failed", e.Message);
 
                     return failed_config;
                 }
@@ -172,7 +180,7 @@ namespace IRC
                 {
                     Dictionary<string, string> failed_config = new Dictionary<string, string>();
 
-                    failed_config.Add("failed", "userq");
+                    failed_config.Add("failed", "Requested not to create new config file");
 
                     return failed_config;
                 }
@@ -180,7 +188,7 @@ namespace IRC
                 {
                     Dictionary<string, string> failed_config = new Dictionary<string, string>();
 
-                    failed_config.Add("failed", "failed");
+                    failed_config.Add("failed", "Unknown");
 
                     return failed_config;
                 }

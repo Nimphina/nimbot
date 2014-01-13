@@ -9,3 +9,14 @@ C:\Users\Daniel\Documents\GitHub\nimbot\IRC\bin\Debug\GoogleSearchAPI.dll
 C:\Users\Daniel\Documents\GitHub\nimbot\IRC\bin\Debug\Newtonsoft.Json.dll
 C:\Users\Daniel\Documents\GitHub\nimbot\IRC\bin\Debug\GoogleSearchAPI.xml
 C:\Users\Daniel\Documents\GitHub\nimbot\IRC\bin\Debug\Newtonsoft.Json.xml
+D:\Users\dh4472\Documents\GitHub\nimbot\IRC\obj\x86\Debug\IRC.exe
+D:\Users\dh4472\Documents\GitHub\nimbot\IRC\obj\x86\Debug\IRC.csprojResolveAssemblyReference.cache
+D:\Users\dh4472\Documents\GitHub\nimbot\IRC\bin\Debug\IRC.exe
+D:\Users\dh4472\Documents\GitHub\nimbot\IRC\bin\Debug\IRC.pdb
+D:\Users\dh4472\Documents\GitHub\nimbot\IRC\bin\Debug\GoogleSearchAPI.dll
+D:\Users\dh4472\Documents\GitHub\nimbot\IRC\bin\Debug\Meebey.SmartIrc4net.dll
+D:\Users\dh4472\Documents\GitHub\nimbot\IRC\bin\Debug\Newtonsoft.Json.dll
+D:\Users\dh4472\Documents\GitHub\nimbot\IRC\bin\Debug\log4net.dll
+D:\Users\dh4472\Documents\GitHub\nimbot\IRC\bin\Debug\GoogleSearchAPI.xml
+D:\Users\dh4472\Documents\GitHub\nimbot\IRC\bin\Debug\Newtonsoft.Json.xml
+D:\Users\dh4472\Documents\GitHub\nimbot\IRC\obj\x86\Debug\IRC.pdb

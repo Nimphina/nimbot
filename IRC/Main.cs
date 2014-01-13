@@ -80,9 +80,9 @@ namespace IRC
             {
                 //If there is a failure to connect, the client SHOULD kill the cli thread, print error and then wait for user input before quitting. 
                 t_cli.Abort();
-                bottools.consolemsg(bottools.msglevel.critcial, "ERROR", "Failed to connect:");
+                bottools.consolemsg(bottools.msglevel.critcial, "Failed to connect:", "ERROR");
 
-                bottools.consolemsg(bottools.msglevel.info, "AWINPUT", "Press any key to continue.");
+                bottools.consolemsg(bottools.msglevel.info, "Press any key to continue.", "AWINP");
                 Console.ReadKey();
             }
             t_cli.Abort();

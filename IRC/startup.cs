@@ -47,7 +47,7 @@ namespace IRC
             Console.WriteLine("                  /_/ |_//_//_/ /_/ /_//_.___/ \\____/ \\__/");
 
             Console.WriteLine("                      Ver: {0} written by Nimphina", version);
-            Console.WriteLine("                 Reality cuts like a knife");
+            Console.WriteLine("                      Reality cuts like a knife");
             Console.WriteLine("");
             // Console.WriteLine("---------------------------------------------------------------------------------");
             Console.ResetColor();
