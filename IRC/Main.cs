@@ -66,10 +66,13 @@ namespace IRC
 
 
             try
-            {
-                if (config_options.ContainsKey("failed")|| config_options.ContainsKey("created"))
+            {   //This is probably a shitty way to do things
+                if (config_options.ContainsKey("failed"))
                 {
-                    Console.WriteLine("Panic");
+                     bottools.consolemsg(bottools.msglevel.critical, string.Format("There is an error with the configuration: {0}", config_options["failed"]), "ERROR");
+                }
+                else if (config_options.ContainsKey("created")){
+                    bottool.consolemsg(bottols.msglevel.info, "Config created, please restart the program", "INFO");
                 }
                 else
                 {
