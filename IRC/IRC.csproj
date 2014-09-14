@@ -43,10 +43,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="commonmethods.cs" />
+    <Compile Include="Commands.cs" />
+    <Compile Include="google.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="startup.cs" />
+    <Compile Include="Nimbot.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
